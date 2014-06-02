@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PatientRx</string>
+    <string name="patient_rx">Patient Rx</string>
+
+    <!-- Home Activity -->
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="create_medical_case">Create Medical Case</string>
+    <string name="reply_from_doctor">Reply From Doctor</string>
+    <string name="previously_submitted_cases">Previously Submitted cases</string>
+    <string name="title_activity_create_medical_case">CreateMedicalCaseActivity</string>
+
+    <!-- Create Medical case -->
+    <string name="enter_name_hint">Enter name</string>
+    <string name="image">image</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>
