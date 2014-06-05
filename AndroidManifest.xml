@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.matrix.patientrx.SplashScreenAcitivity"
+            android:name="com.matrix.patientrx.activity.SplashScreenAcitivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,21 +27,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.matrix.patientrx.HomeActivity"
+            android:name="com.matrix.patientrx.activity.HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
         <activity
-            android:name="com.matrix.patientrx.CreateMedicalCaseActivity"
+            android:name="com.matrix.patientrx.activity.CreateMedicalCaseActivity"
             android:label="@string/title_activity_create_medical_case" >
         </activity>
         <activity
-            android:name="com.matrix.patientrx.LoginActivity"
+            android:name="com.matrix.patientrx.activity.GoogleLoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="com.matrix.patientrx.activity.LoginActivity"
+            android:label="@string/title_activity_login" >
+        </activity>
     </application>
 
 </manifest>

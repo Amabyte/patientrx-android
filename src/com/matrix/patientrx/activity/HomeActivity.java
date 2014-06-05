@@ -1,4 +1,6 @@
-package com.matrix.patientrx;
+package com.matrix.patientrx.activity;
+
+import com.matrix.patientrx.R;
 
 import android.app.Activity;
 import android.content.Intent;
