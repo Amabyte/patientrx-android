@@ -20,10 +20,12 @@ import android.widget.Toast;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.gson.Gson;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.matrix.patientrx.R;
-import com.matrix.patientrx.http.RxRestClient;
+import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.models.LoginResponse;
+import com.matrix.patientrx.utils.Utils;
 
 public class GoogleLoginActivity extends Activity implements OnClickListener {
 	private static final String TAG = "GoogleLoginActivity";
@@ -83,7 +85,7 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 
 	}
 
-	JsonHttpResponseHandler asyncHttpResponseHandler = new JsonHttpResponseHandler() {
+	private JsonHttpResponseHandler mAsyncHttpResponseHandler = new JsonHttpResponseHandler() {
 		@Override
 		public void onStart() {
 		}
@@ -91,8 +93,11 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 		@Override
 		public void onSuccess(int statusCode, Header[] headers,
 				org.json.JSONObject response) {
-			String success = "onSuccess status code:" + statusCode
-					+ " response body:" + response + " headers:" + headers;
+			LoginResponse model = new LoginResponse();
+			Gson gson = new Gson();
+			model = gson.fromJson(response.toString(), model.getClass());
+			String success="";
+			success=gson.toJson(response).toString();
 			Log.d("success", "onSuccess:" + success);
 			// Successfully got a response
 			Toast.makeText(getApplicationContext(), "onSuccess" + success,
@@ -158,19 +163,13 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 		}
 
 		@Override
-		protected void onPostExecute(String s) {
-			super.onPostExecute(s);
-			if (s == null)
+		protected void onPostExecute(String token) {
+			super.onPostExecute(token);
+			if (token == null)
 				return;
-			// ((TextView)
-			// findViewById(R.id.token_value)).setText("Token Value: " + s);
-			Toast.makeText(getApplicationContext(), "Token:" + s,
-					Toast.LENGTH_LONG).show();
-			RequestParams params = new RequestParams();
-			params.put("provider", "google_oauth2");
-			params.put("token", s);
-			RxRestClient.post("patients/social_login.json", params,
-					asyncHttpResponseHandler);
+			Utils.loginToPatientRx(Constants.GOOGLE_LOGIN, token,
+					mAsyncHttpResponseHandler);
 		}
+
 	}
 }
