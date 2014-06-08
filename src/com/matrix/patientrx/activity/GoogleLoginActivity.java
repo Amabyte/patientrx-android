@@ -7,6 +7,7 @@ import org.apache.http.Header;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 	private AccountManager mAccountManager;
 	private Spinner mSpinner;
 	private String mAccountName;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +113,10 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 			// save the session id
 			Preference.setString(Constants.SESSION_ID, sessionId);
 			saveUserDetails(loginResponse);
+			progressDialog.dismiss();
+			startActivity(new Intent(GoogleLoginActivity.this,
+					HomeActivity.class));
+			finish();
 		}
 
 		@Override
@@ -121,8 +127,11 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 					+ " response body:" + errorResponse + " error:" + e
 					+ " headers:" + headers;
 			Log.d("err", err);
+			progressDialog.dismiss();
 			Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG)
 					.show();
+
+			
 		}
 
 		@Override
@@ -151,6 +160,16 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 	}
 
 	private class RetrieveTokenTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected void onPreExecute() {
+			progressDialog = new ProgressDialog(GoogleLoginActivity.this);
+			progressDialog.setTitle("Login");
+			progressDialog.setMessage("Google Login");
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+			super.onPreExecute();
+		}
 
 		@Override
 		protected String doInBackground(String... params) {

@@ -24,6 +24,7 @@ public class HomeActivity extends Activity implements OnClickListener {
 				this);
 		findViewById(R.id.buttonReplyFromDoctor).setOnClickListener(this);
 		findViewById(R.id.buttonLogout).setOnClickListener(this);
+		findViewById(R.id.buttonGetUserProfile).setOnClickListener(this);		
 	}
 
 	@Override
@@ -35,6 +36,10 @@ public class HomeActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.buttonLogout:
 			logout();
+			break;
+		case R.id.buttonGetUserProfile:
+			Toast.makeText(getApplicationContext(), "Get Profile", Toast.LENGTH_LONG)
+			.show();
 			break;
 		}
 

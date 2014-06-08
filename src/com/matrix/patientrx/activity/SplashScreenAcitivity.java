@@ -28,8 +28,12 @@ public class SplashScreenAcitivity extends Activity {
 					startActivity(new Intent(SplashScreenAcitivity.this,
 							HomeActivity.class));
 				} else {
+					// TODO uncomment this after implementing facebook login
+					// startActivity(new Intent(SplashScreenAcitivity.this,
+					// LoginActivity.class));
+
 					startActivity(new Intent(SplashScreenAcitivity.this,
-							LoginActivity.class));
+							GoogleLoginActivity.class));
 				}
 				finish();
 			}
