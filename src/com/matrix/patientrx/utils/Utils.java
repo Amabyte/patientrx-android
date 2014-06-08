@@ -14,4 +14,14 @@ public class Utils {
 		RxRestClient.post("patients/social_login.json", params,
 				asyncHttpResponseHandler);
 	}
+
+	public static void getProfile(
+			JsonHttpResponseHandler asyncHttpResponseHandler) {
+		RxRestClient.get("patients/profile.json", null,
+				asyncHttpResponseHandler);
+	}
+
+	public static void logout(JsonHttpResponseHandler asyncHttpResponseHandler) {
+		RxRestClient.delete("patients/sign_out.json", asyncHttpResponseHandler);
+	}
 }
