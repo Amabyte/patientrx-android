@@ -24,12 +24,16 @@ public class SplashScreenAcitivity extends Activity {
 
 			@Override
 			public void run() {
-				if (Preference.getString(Constants.TOKEN) != null) {
+				if (Preference.getString(Constants.SESSION_ID) != null) {
 					startActivity(new Intent(SplashScreenAcitivity.this,
 							HomeActivity.class));
 				} else {
+					// TODO uncomment this after implementing facebook login
+					// startActivity(new Intent(SplashScreenAcitivity.this,
+					// LoginActivity.class));
+
 					startActivity(new Intent(SplashScreenAcitivity.this,
-							LoginActivity.class));
+							GoogleLoginActivity.class));
 				}
 				finish();
 			}

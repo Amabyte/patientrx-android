@@ -7,6 +7,7 @@ import org.apache.http.Header;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,10 +21,13 @@ import android.widget.Toast;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.gson.Gson;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.matrix.patientrx.R;
-import com.matrix.patientrx.http.RxRestClient;
+import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.models.LoginResponse;
+import com.matrix.patientrx.utils.Preference;
+import com.matrix.patientrx.utils.Utils;
 
 public class GoogleLoginActivity extends Activity implements OnClickListener {
 	private static final String TAG = "GoogleLoginActivity";
@@ -31,6 +35,7 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 	private AccountManager mAccountManager;
 	private Spinner mSpinner;
 	private String mAccountName;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +88,7 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 
 	}
 
-	JsonHttpResponseHandler asyncHttpResponseHandler = new JsonHttpResponseHandler() {
+	private JsonHttpResponseHandler mAsyncHttpResponseHandler = new JsonHttpResponseHandler() {
 		@Override
 		public void onStart() {
 		}
@@ -91,14 +96,27 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 		@Override
 		public void onSuccess(int statusCode, Header[] headers,
 				org.json.JSONObject response) {
-			String success = "onSuccess status code:" + statusCode
-					+ " response body:" + response + " headers:" + headers;
-			Log.d("success", "onSuccess:" + success);
-			// Successfully got a response
-			Toast.makeText(getApplicationContext(), "onSuccess" + success,
-					Toast.LENGTH_LONG).show();
-			// String token = "";
-			// Preference.setString(Constants.TOKEN, token);
+			String sessionId = "";
+			LoginResponse loginResponse = new LoginResponse();
+			Gson gson = new Gson();
+
+			loginResponse = gson.fromJson(response.toString(),
+					loginResponse.getClass());
+
+			for (Header header : headers) {
+				// store the Set-Cookie last value
+				if (header.getName().equalsIgnoreCase("Set-Cookie")) {
+					sessionId = header.getValue();
+				}
+				// TODO modify this logic
+			}
+			// save the session id
+			Preference.setString(Constants.SESSION_ID, sessionId);
+			saveUserDetails(loginResponse);
+			progressDialog.dismiss();
+			startActivity(new Intent(GoogleLoginActivity.this,
+					HomeActivity.class));
+			finish();
 		}
 
 		@Override
@@ -109,15 +127,11 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 					+ " response body:" + errorResponse + " error:" + e
 					+ " headers:" + headers;
 			Log.d("err", err);
+			progressDialog.dismiss();
 			Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG)
 					.show();
-		}
 
-		@Override
-		public void onRetry() {
-			// Request was retried
-			// Toast.makeText(getApplicationContext(), "onRetry",
-			// Toast.LENGTH_LONG).show();
+			
 		}
 
 		@Override
@@ -135,7 +149,27 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 		}
 	};
 
+	private void saveUserDetails(LoginResponse loginResponse) {
+		Preference.setString(Constants.USER_NAME, loginResponse.getPatient()
+				.getName());
+		Preference.setString(Constants.EMAIL_ID, loginResponse.getPatient()
+				.getEmail());
+		Preference
+				.setInt(Constants.USER_ID, loginResponse.getPatient().getId());
+
+	}
+
 	private class RetrieveTokenTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected void onPreExecute() {
+			progressDialog = new ProgressDialog(GoogleLoginActivity.this);
+			progressDialog.setTitle("Login");
+			progressDialog.setMessage("Google Login");
+			progressDialog.setCancelable(false);
+			progressDialog.show();
+			super.onPreExecute();
+		}
 
 		@Override
 		protected String doInBackground(String... params) {
@@ -158,19 +192,13 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 		}
 
 		@Override
-		protected void onPostExecute(String s) {
-			super.onPostExecute(s);
-			if (s == null)
+		protected void onPostExecute(String token) {
+			super.onPostExecute(token);
+			if (token == null)
 				return;
-			// ((TextView)
-			// findViewById(R.id.token_value)).setText("Token Value: " + s);
-			Toast.makeText(getApplicationContext(), "Token:" + s,
-					Toast.LENGTH_LONG).show();
-			RequestParams params = new RequestParams();
-			params.put("provider", "google_oauth2");
-			params.put("token", s);
-			RxRestClient.post("patients/social_login.json", params,
-					asyncHttpResponseHandler);
+			Utils.loginToPatientRx(Constants.GOOGLE_LOGIN, token,
+					mAsyncHttpResponseHandler);
 		}
+
 	}
 }

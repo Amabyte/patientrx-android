@@ -5,6 +5,8 @@ import android.util.Log;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.utils.Preference;
 
 public class RxRestClient {
 	private static final String BASE_URL = "http://patientrx.herokuapp.com/api/";
@@ -23,7 +25,8 @@ public class RxRestClient {
 
 	public static void get(String url, RequestParams params,
 			AsyncHttpResponseHandler responseHandler) {
-
+//		getInstance().addHeader("Cookie",
+//				Preference.getString(Constants.SESSION_ID));
 		getInstance().get(getAbsoluteUrl(url), params, responseHandler);
 	}
 
@@ -31,6 +34,11 @@ public class RxRestClient {
 			AsyncHttpResponseHandler responseHandler) {
 		Log.e("test", "Url:" + getAbsoluteUrl(url));
 		getInstance().post(getAbsoluteUrl(url), params, responseHandler);
+	}
+
+	public static void delete(String url,
+			AsyncHttpResponseHandler responseHandler) {
+		getInstance().delete(getAbsoluteUrl(url),responseHandler);
 	}
 
 	private static String getAbsoluteUrl(String relativeUrl) {
