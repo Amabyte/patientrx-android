@@ -1,5 +1,7 @@
 package com.matrix.patientrx.activity;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,39 +10,80 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.matrix.patientrx.R;
+import com.matrix.patientrx.activity.AudioRecordTest.PlayButton;
+import com.matrix.patientrx.activity.AudioRecordTest.RecordButton;
 import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.utils.DialogManager;
 
 public class CreateMedicalCaseActivity extends Activity implements
 		OnClickListener {
 	private static final int IMAGE_GALLERY_PICKER_SELECT = 0;
 	private ImageView mImageView;
 	private Button mEditImageView;
+	private Button mButtonAudio;
+	private TextView mTextAudioStatus;
+	private Button mEditAudio;
 	private Boolean mImageSelected = false;
 	private String mImagePath;
+	boolean mStartRecording = true;
+	private static final String LOG_TAG = "CreateMedicalCaseActivity";
+	private static String mFileName = null;
+
+	private RecordButton mRecordButton = null;
+	private MediaRecorder mRecorder = null;
+
+	private PlayButton mPlayButton = null;
+	private MediaPlayer mPlayer = null;
+	boolean mStartPlaying = true;
+
+	private DialogManager mDialogManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_medical_case);
+		mDialogManager = new DialogManager();
+		mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+		mFileName += "/audiorecordtest.3gp";
 		intializeViews();
 	}
 
 	private void intializeViews() {
 		mImageView = (ImageView) findViewById(R.id.img);
 		mEditImageView = (Button) findViewById(R.id.buttonEditImage);
+		mTextAudioStatus = (TextView) findViewById(R.id.textRecordStatus);
+		mEditAudio = (Button) findViewById(R.id.buttonEditAudio);
+		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
 		mImageView.setOnClickListener(this);
 		mEditImageView.setOnClickListener(this);
+		mEditAudio.setOnClickListener(this);
+		mButtonAudio.setOnClickListener(this);
+	}
+
+	private void recordPauseAudio() {
+		onRecord(mStartRecording);
+		if (mStartRecording) {
+			mTextAudioStatus.setText("Stop recording");
+		} else {
+			mTextAudioStatus.setText("Start recording");
+		}
+		mStartRecording = !mStartRecording;
 	}
 
 	@Override
@@ -60,8 +103,97 @@ public class CreateMedicalCaseActivity extends Activity implements
 		case R.id.buttonEditImage:
 			showPictureSelectionOptions();
 			break;
+		case R.id.buttonRecordAudio:
+			if (!mAudioRecordCompleted) {
+				recordPauseAudio();
+			} else {
+				// play recored file
+				onPlay(mStartPlaying);
+				if (mStartPlaying) {
+					mTextAudioStatus.setText("Stop playing");
+				} else {
+					mTextAudioStatus.setText("Start playing");
+				}
+				mStartPlaying = !mStartPlaying;
+			}
+			break;
+		case R.id.buttonEditAudio:
+			// show a alert dialog
+			mDialogManager.showAlertDialog(CreateMedicalCaseActivity.this,
+					"Alert", "Press OK to erase erase the audio", "OK",
+					"Cancel", new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface arg0, int arg1) {
+							// TODO Auto-generated method stub
+							mAudioRecordCompleted = false;
+						}
+
+					}, null);
+			break;
+
 		}
 
+	}
+
+	private void onPlay(boolean start) {
+		if (start) {
+			startPlaying();
+		} else {
+			stopPlaying();
+		}
+	}
+
+	private void startPlaying() {
+		mPlayer = new MediaPlayer();
+		try {
+			mPlayer.setDataSource(mFileName);
+			mPlayer.prepare();
+			mPlayer.start();
+		} catch (IOException e) {
+			Log.e(LOG_TAG, "prepare() failed");
+		}
+	}
+
+	private void stopPlaying() {
+		mPlayer.release();
+		mPlayer = null;
+	}
+
+	private void onRecord(boolean start) {
+		if (start) {
+			startRecording();
+		} else {
+			stopRecording();
+		}
+	}
+
+	private void startRecording() {
+		mRecorder = new MediaRecorder();
+		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+		mRecorder.setOutputFile(mFileName);
+		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+		try {
+			mRecorder.prepare();
+		} catch (IOException e) {
+			Log.e(LOG_TAG, "prepare() failed");
+		}
+
+		mRecorder.start();
+	}
+
+	private Boolean mAudioRecordCompleted = false;
+
+	private void stopRecording() {
+		mRecorder.stop();
+		mRecorder.release();
+		mRecorder = null;
+		// TODO enable play the recorded audio
+		mAudioRecordCompleted = true;
+		mEditAudio.setVisibility(View.VISIBLE);
+		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(R.drawable.play));
 	}
 
 	private void showPictureSelectionOptions() {
@@ -105,6 +237,20 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mImagePath = cursor.getString(columnIndex);
 		cursor.close();
 		return BitmapFactory.decodeFile(mImagePath);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (mRecorder != null) {
+			mRecorder.release();
+			mRecorder = null;
+		}
+
+		if (mPlayer != null) {
+			mPlayer.release();
+			mPlayer = null;
+		}
 	}
 
 	@Override

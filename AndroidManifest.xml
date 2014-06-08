@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -45,9 +47,12 @@
             android:name="com.matrix.patientrx.activity.GoogleLoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
-        
-         <activity
+        <activity
             android:name="com.matrix.patientrx.activity.ZoomInZoomOut"
+            android:label="@string/title_activity_home" >
+        </activity>
+        <activity
+            android:name="com.matrix.patientrx.activity.AudioRecordTest"
             android:label="@string/title_activity_home" >
         </activity>
 
