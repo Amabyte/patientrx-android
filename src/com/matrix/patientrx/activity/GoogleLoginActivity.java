@@ -25,6 +25,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.models.LoginResponse;
+import com.matrix.patientrx.utils.Preference;
 import com.matrix.patientrx.utils.Utils;
 
 public class GoogleLoginActivity extends Activity implements OnClickListener {
@@ -93,17 +94,23 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 		@Override
 		public void onSuccess(int statusCode, Header[] headers,
 				org.json.JSONObject response) {
-			LoginResponse model = new LoginResponse();
+			String sessionId = "";
+			LoginResponse loginResponse = new LoginResponse();
 			Gson gson = new Gson();
-			model = gson.fromJson(response.toString(), model.getClass());
-			String success="";
-			success=gson.toJson(response).toString();
-			Log.d("success", "onSuccess:" + success);
-			// Successfully got a response
-			Toast.makeText(getApplicationContext(), "onSuccess" + success,
-					Toast.LENGTH_LONG).show();
-			// String token = "";
-			// Preference.setString(Constants.TOKEN, token);
+
+			loginResponse = gson.fromJson(response.toString(),
+					loginResponse.getClass());
+
+			for (Header header : headers) {
+				// store the Set-Cookie last value
+				if (header.getName().equalsIgnoreCase("Set-Cookie")) {
+					sessionId = header.getValue();
+				}
+				// TODO modify this logic
+			}
+			// save the session id
+			Preference.setString(Constants.SESSION_ID, sessionId);
+			saveUserDetails(loginResponse);
 		}
 
 		@Override
@@ -116,13 +123,6 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 			Log.d("err", err);
 			Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG)
 					.show();
-		}
-
-		@Override
-		public void onRetry() {
-			// Request was retried
-			// Toast.makeText(getApplicationContext(), "onRetry",
-			// Toast.LENGTH_LONG).show();
 		}
 
 		@Override
@@ -139,6 +139,16 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 			// Completed the request (either success or failure)
 		}
 	};
+
+	private void saveUserDetails(LoginResponse loginResponse) {
+		Preference.setString(Constants.USER_NAME, loginResponse.getPatient()
+				.getName());
+		Preference.setString(Constants.EMAIL_ID, loginResponse.getPatient()
+				.getEmail());
+		Preference
+				.setInt(Constants.USER_ID, loginResponse.getPatient().getId());
+
+	}
 
 	private class RetrieveTokenTask extends AsyncTask<String, Void, String> {
 

@@ -21,6 +21,10 @@ public class Preference {
 		return getPreferences().getString(key, null);
 	}
 
+	public static int getInt(String key) {
+		return getPreferences().getInt(key, -1);
+	}
+
 	public static boolean getBoolean(String key) {
 		return getPreferences().getBoolean(key, false);
 	}
@@ -28,6 +32,12 @@ public class Preference {
 	public static void setString(String key, String value) {
 		SharedPreferences.Editor editor = getPreferences().edit();
 		editor.putString(key, value);
+		editor.commit();
+	}
+
+	public static void setInt(String key, int value) {
+		SharedPreferences.Editor editor = getPreferences().edit();
+		editor.putInt(key, value);
 		editor.commit();
 	}
 

@@ -12,8 +12,16 @@ package com.matrix.patientrx.models;
 //}
 
 public class LoginResponse {
+
+	private Patient patient;
+	private Boolean is_new_patient;
+
 	public class Patient {
 		private int id;
+		private String created_at;
+		private String updated_at;
+		private String email;
+		private String name;
 
 		public int getId() {
 			return id;
@@ -55,10 +63,6 @@ public class LoginResponse {
 			this.name = name;
 		}
 
-		private String created_at;
-		private String updated_at;
-		private String email;
-		private String name;
 	}
 
 	public Patient getPatient() {
@@ -77,6 +81,4 @@ public class LoginResponse {
 		this.is_new_patient = is_new_patient;
 	}
 
-	private Patient patient;
-	private Boolean is_new_patient;
 }

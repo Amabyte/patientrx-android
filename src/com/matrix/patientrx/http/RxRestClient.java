@@ -23,7 +23,6 @@ public class RxRestClient {
 
 	public static void get(String url, RequestParams params,
 			AsyncHttpResponseHandler responseHandler) {
-
 		getInstance().get(getAbsoluteUrl(url), params, responseHandler);
 	}
 
@@ -31,6 +30,12 @@ public class RxRestClient {
 			AsyncHttpResponseHandler responseHandler) {
 		Log.e("test", "Url:" + getAbsoluteUrl(url));
 		getInstance().post(getAbsoluteUrl(url), params, responseHandler);
+	}
+
+	public static void delete(String url, RequestParams params,
+			AsyncHttpResponseHandler responseHandler) {
+
+		// getInstance().delete(getAbsoluteUrl(url), params, responseHandler);
 	}
 
 	private static String getAbsoluteUrl(String relativeUrl) {

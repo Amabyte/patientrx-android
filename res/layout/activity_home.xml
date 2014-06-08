@@ -32,5 +32,13 @@
         android:padding="5dp"
         android:text="@string/previously_submitted_cases"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+     <Button
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Logout"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

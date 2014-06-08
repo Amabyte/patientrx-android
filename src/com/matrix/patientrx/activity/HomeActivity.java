@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 public class HomeActivity extends Activity implements OnClickListener {
 
@@ -22,6 +23,7 @@ public class HomeActivity extends Activity implements OnClickListener {
 		findViewById(R.id.buttonPreviouslySubmittedCases).setOnClickListener(
 				this);
 		findViewById(R.id.buttonReplyFromDoctor).setOnClickListener(this);
+		findViewById(R.id.buttonLogout).setOnClickListener(this);
 	}
 
 	@Override
@@ -31,7 +33,15 @@ public class HomeActivity extends Activity implements OnClickListener {
 			startActivity(new Intent(HomeActivity.this,
 					CreateMedicalCaseActivity.class));
 			break;
+		case R.id.buttonLogout:
+			logout();
+			break;
 		}
 
+	}
+
+	private void logout() {
+		Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG)
+				.show();
 	}
 }
