@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.matrix.patientrx.R;
+import com.matrix.patientrx.constants.Constants;
 
 public class CreateMedicalCaseActivity extends Activity implements
 		OnClickListener {
@@ -26,6 +27,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private ImageView mImageView;
 	private Button mEditImageView;
 	private Boolean mImageSelected = false;
+	private String mImagePath;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,10 @@ public class CreateMedicalCaseActivity extends Activity implements
 		case R.id.img:
 			if (mImageSelected) {
 				// zoom ImageView
+				Intent intent = new Intent(CreateMedicalCaseActivity.this,
+						ZoomInZoomOut.class);
+				intent.putExtra(Constants.EXTRA_IMAGE_PATH, mImagePath);
+				startActivity(intent);
 			} else {
 				showPictureSelectionOptions();
 			}
@@ -89,16 +95,16 @@ public class CreateMedicalCaseActivity extends Activity implements
 	 * * Use for decoding camera response data. * * @param data * @param context
 	 * * @return
 	 */
-	public static Bitmap getBitmapFromCameraData(Intent data, Context context) {
+	public Bitmap getBitmapFromCameraData(Intent data, Context context) {
 		Uri selectedImage = data.getData();
 		String[] filePathColumn = { MediaStore.Images.Media.DATA };
 		Cursor cursor = context.getContentResolver().query(selectedImage,
 				filePathColumn, null, null, null);
 		cursor.moveToFirst();
 		int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-		String picturePath = cursor.getString(columnIndex);
+		mImagePath = cursor.getString(columnIndex);
 		cursor.close();
-		return BitmapFactory.decodeFile(picturePath);
+		return BitmapFactory.decodeFile(mImagePath);
 	}
 
 	@Override
