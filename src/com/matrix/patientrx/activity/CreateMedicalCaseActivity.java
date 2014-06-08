@@ -2,11 +2,19 @@ package com.matrix.patientrx.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -14,7 +22,9 @@ import com.matrix.patientrx.R;
 
 public class CreateMedicalCaseActivity extends Activity implements
 		OnClickListener {
+	private static final int IMAGE_GALLERY_PICKER_SELECT = 0;
 	private ImageView mImageView;
+	private Button mEditImageView;
 	private Boolean mImageSelected = false;
 
 	@Override
@@ -26,8 +36,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 	private void intializeViews() {
 		mImageView = (ImageView) findViewById(R.id.img);
+		mEditImageView = (Button) findViewById(R.id.buttonEditImage);
 		mImageView.setOnClickListener(this);
-
+		mEditImageView.setOnClickListener(this);
 	}
 
 	@Override
@@ -39,6 +50,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 			} else {
 				showPictureSelectionOptions();
 			}
+			break;
+		case R.id.buttonEditImage:
+			showPictureSelectionOptions();
 			break;
 		}
 
@@ -57,12 +71,46 @@ public class CreateMedicalCaseActivity extends Activity implements
 							Toast.makeText(getApplicationContext(),
 									"Take picture", Toast.LENGTH_SHORT).show();
 						} else {
-							Toast.makeText(getApplicationContext(),
-									"Select From gallery", Toast.LENGTH_SHORT)
-									.show();
+							selectImageFromGallery();
 						}
 						dialog.dismiss();
 					}
+
 				}).create().show();
+	}
+
+	private void selectImageFromGallery() {
+		Intent i = new Intent(Intent.ACTION_PICK,
+				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(i, IMAGE_GALLERY_PICKER_SELECT);
+	}
+
+	/**
+	 * * Use for decoding camera response data. * * @param data * @param context
+	 * * @return
+	 */
+	public static Bitmap getBitmapFromCameraData(Intent data, Context context) {
+		Uri selectedImage = data.getData();
+		String[] filePathColumn = { MediaStore.Images.Media.DATA };
+		Cursor cursor = context.getContentResolver().query(selectedImage,
+				filePathColumn, null, null, null);
+		cursor.moveToFirst();
+		int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+		String picturePath = cursor.getString(columnIndex);
+		cursor.close();
+		return BitmapFactory.decodeFile(picturePath);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == IMAGE_GALLERY_PICKER_SELECT
+				&& resultCode == Activity.RESULT_OK) {
+			Bitmap bitmap = getBitmapFromCameraData(data,
+					CreateMedicalCaseActivity.this);
+			mImageView.setImageBitmap(bitmap);
+			mImageSelected = true;
+			mEditImageView.setVisibility(View.VISIBLE);
+		}
 	}
 }
