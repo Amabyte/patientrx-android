@@ -54,8 +54,11 @@
         android:weightSum="2" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="#66ffff"
             android:orientation="vertical" >
 
             <ImageView
@@ -63,7 +66,7 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:contentDescription="@string/image"
-                android:src="@drawable/ic_launcher" />
+                android:src="@drawable/camera" />
 
             <Button
                 android:id="@+id/buttonEditImage"
@@ -74,26 +77,28 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:orientation="vertical"
             android:padding="5dp" >
 
             <TextView
                 android:id="@+id/textRecordStatus"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Record Audio" />
 
             <Button
                 android:id="@+id/buttonRecordAudio"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:background="@drawable/record" />
 
             <Button
                 android:id="@+id/buttonEditAudio"
-                android:layout_width="50dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Edit"
                 android:visibility="gone" />

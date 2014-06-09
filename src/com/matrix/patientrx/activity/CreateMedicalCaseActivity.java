@@ -1,15 +1,18 @@
 package com.matrix.patientrx.activity;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
@@ -30,24 +33,30 @@ import android.widget.Toast;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.utils.DialogManager;
+import com.matrix.patientrx.utils.Utils;
 
 public class CreateMedicalCaseActivity extends Activity implements
 		OnClickListener {
-	private static final int IMAGE_GALLERY_PICKER_SELECT = 0;
+	private static final int REQUEST_SELECT_IMAGE_FROM_GALLERY = 0;
+	private static final int REQUEST_TAKE_PHOTO = 1;
 	private static final String LOG_TAG = "CreateMedicalCaseActivity";
+	private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
+
 	private ImageView mImageView;
-	private Button mEditImageView;
-	private Button mButtonAudio;
 	private TextView mTextAudioStatus;
 	private Button mEditAudio;
+	private Button mEditImageView;
+	private Button mButtonAudio;
 	private Spinner mSpinnerGender;
-	private Boolean mImageSelected = false;
-	private String mImagePath;
+
 	private boolean mStartRecording = true;
-	private static String mAudioFileName = null;
+	private boolean mImageSelected = false;
+	private boolean mStartPlaying = true;
+	private String mImagePath;
+	private String mAudioFileName = null;
 	private MediaRecorder mRecorder = null;
 	private MediaPlayer mPlayer = null;
-	private boolean mStartPlaying = true;
+
 	private DialogManager mDialogManager;
 
 	@Override
@@ -68,29 +77,15 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mEditAudio = (Button) findViewById(R.id.buttonEditAudio);
 		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
 		mSpinnerGender = (Spinner) findViewById(R.id.spinnerGender);
-		setGenderSpinner();
-		mImageView.setOnClickListener(this);
-		mEditImageView.setOnClickListener(this);
-		mEditAudio.setOnClickListener(this);
-		mButtonAudio.setOnClickListener(this);
-	}
-
-	private void setGenderSpinner() {
 		String[] gender = { "Male", "Female", "Third" };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, gender);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpinnerGender.setAdapter(adapter);
-	}
-
-	private void recordPauseAudio() {
-		onRecord(mStartRecording);
-		if (mStartRecording) {
-			mTextAudioStatus.setText("Stop recording");
-		} else {
-			mTextAudioStatus.setText("Start recording");
-		}
-		mStartRecording = !mStartRecording;
+		mImageView.setOnClickListener(this);
+		mEditImageView.setOnClickListener(this);
+		mEditAudio.setOnClickListener(this);
+		mButtonAudio.setOnClickListener(this);
 	}
 
 	@Override
@@ -114,7 +109,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			if (!mAudioRecordCompleted) {
 				recordPauseAudio();
 			} else {
-				// play recored file
+				// play recorded file
 				onPlay(mStartPlaying);
 				if (mStartPlaying) {
 					mTextAudioStatus.setText("Stop playing");
@@ -125,28 +120,32 @@ public class CreateMedicalCaseActivity extends Activity implements
 			}
 			break;
 		case R.id.buttonEditAudio:
-			// show a alert dialog
 			mDialogManager.showAlertDialog(CreateMedicalCaseActivity.this,
 					"Alert", "Press OK to erase erase the audio", "OK",
 					"Cancel", new DialogInterface.OnClickListener() {
-
 						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
-							// TODO Auto-generated method stub
-							// stopPlaying();
 							mAudioRecordCompleted = false;
 							mTextAudioStatus.setText("Start Recording");
 							mButtonAudio.setBackgroundDrawable(getResources()
 									.getDrawable(R.drawable.record));
-
+							mEditAudio.setVisibility(View.INVISIBLE);
 						}
-
 					}, null);
 			break;
-
 		}
 
+	}
+
+	private void recordPauseAudio() {
+		if (mStartRecording) {
+			mTextAudioStatus.setText("Stop recording");
+		} else {
+			mTextAudioStatus.setText("Start recording");
+		}
+		onRecord(mStartRecording);
+		mStartRecording = !mStartRecording;
 	}
 
 	private void onPlay(boolean start) {
@@ -169,12 +168,14 @@ public class CreateMedicalCaseActivity extends Activity implements
 					mButtonAudio.setBackgroundDrawable(getResources()
 							.getDrawable(R.drawable.play));
 					mTextAudioStatus.setText("Start playing");
+					mEditAudio.setEnabled(true);
 				}
 			});
 			mPlayer.prepare();
 			mPlayer.start();
 			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
 					R.drawable.stop));
+			mEditAudio.setEnabled(false);
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "prepare() failed");
 		}
@@ -185,6 +186,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mPlayer.release();
 		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
 				R.drawable.play));
+		mEditAudio.setEnabled(true);
 		mPlayer = null;
 	}
 
@@ -213,6 +215,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mRecorder.start();
 		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
 				R.drawable.stop));
+		mEditAudio.setEnabled(false);
 	}
 
 	private Boolean mAudioRecordCompleted = false;
@@ -227,6 +230,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mEditAudio.setVisibility(View.VISIBLE);
 		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
 				R.drawable.play));
+		mTextAudioStatus.setText("Start playing");
+		mEditAudio.setEnabled(true);
 	}
 
 	private void showPictureSelectionOptions() {
@@ -239,8 +244,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (which == 0) {
-							Toast.makeText(getApplicationContext(),
-									"Take picture", Toast.LENGTH_SHORT).show();
+							dispatchTakePictureIntent();
 						} else {
 							selectImageFromGallery();
 						}
@@ -250,17 +254,73 @@ public class CreateMedicalCaseActivity extends Activity implements
 				}).create().show();
 	}
 
+	/** * Start the camera by dispatching a camera intent. */
+	protected void dispatchTakePictureIntent() {
+		// Check if there is a camera.
+
+		PackageManager packageManager = getPackageManager();
+		if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA) == false) {
+			Toast.makeText(getApplicationContext(),
+					"This device does not have a camera.", Toast.LENGTH_SHORT)
+					.show();
+			return;
+		}
+		// Camera exists? Then proceed...
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		// Ensure that there's a camera activity to handle the intent
+
+		if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+			// Create the File where the photo should go.
+			// If you don't do this, you may get a crash in some devices.
+			File photoFile = null;
+			try {
+				photoFile = createImageFile();
+			} catch (IOException ex) {
+				// Error occurred while creating the File
+				Toast toast = Toast.makeText(getApplicationContext(),
+						"There was a problem saving the photo...",
+						Toast.LENGTH_SHORT);
+				toast.show();
+			}
+			// Continue only if the File was successfully created
+			if (photoFile != null) {
+				Uri fileUri = Uri.fromFile(photoFile);
+				mImagePath = fileUri.getPath();
+				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+				startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+			}
+		}
+	}
+
+	private File createImageFile() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+				.format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = Environment
+				.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+		File image = File.createTempFile(imageFileName, /* prefix */
+				".jpg", /* suffix */
+				storageDir /* directory */
+		);
+
+		// Save a file: path for use with ACTION_VIEW intents
+		// mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+		mImagePath = image.getAbsolutePath();
+		return image;
+	}
+
 	private void selectImageFromGallery() {
 		Intent i = new Intent(Intent.ACTION_PICK,
 				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-		startActivityForResult(i, IMAGE_GALLERY_PICKER_SELECT);
+		startActivityForResult(i, REQUEST_SELECT_IMAGE_FROM_GALLERY);
 	}
 
 	/**
 	 * * Use for decoding camera response data. * * @param data * @param context
 	 * * @return
 	 */
-	public Bitmap getBitmapFromCameraData(Intent data, Context context) {
+	public void setImageFromCameraData(Intent data, Context context) {
 		Uri selectedImage = data.getData();
 		String[] filePathColumn = { MediaStore.Images.Media.DATA };
 		Cursor cursor = context.getContentResolver().query(selectedImage,
@@ -269,7 +329,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 		mImagePath = cursor.getString(columnIndex);
 		cursor.close();
-		return BitmapFactory.decodeFile(mImagePath);
+		Utils.setPic(mImagePath, mImageView);
 	}
 
 	@Override
@@ -287,15 +347,50 @@ public class CreateMedicalCaseActivity extends Activity implements
 	}
 
 	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		if (mImagePath != null) {
+			savedInstanceState.putString(CAPTURED_PHOTO_PATH_KEY, mImagePath);
+		}
+		super.onSaveInstanceState(savedInstanceState);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		if (savedInstanceState.containsKey(CAPTURED_PHOTO_PATH_KEY)) {
+			mImagePath = savedInstanceState.getString(CAPTURED_PHOTO_PATH_KEY);
+		}
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == IMAGE_GALLERY_PICKER_SELECT
-				&& resultCode == Activity.RESULT_OK) {
-			Bitmap bitmap = getBitmapFromCameraData(data,
-					CreateMedicalCaseActivity.this);
-			mImageView.setImageBitmap(bitmap);
+		if (resultCode != Activity.RESULT_OK)
+			return;
+		switch (requestCode) {
+		case REQUEST_SELECT_IMAGE_FROM_GALLERY:
+			setImageFromCameraData(data, CreateMedicalCaseActivity.this);
 			mImageSelected = true;
 			mEditImageView.setVisibility(View.VISIBLE);
+			break;
+		case REQUEST_TAKE_PHOTO:
+			addPicToGallery(mImagePath);
+			// Show the full sized image.
+			Utils.setPic(mImagePath, mImageView);
+			mImageSelected = true;
+			mEditImageView.setVisibility(View.VISIBLE);
+			break;
 		}
+
 	}
+
+	private void addPicToGallery(String imagePath) {
+		Intent mediaScanIntent = new Intent(
+				Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+		File f = new File(imagePath);
+		Uri contentUri = Uri.fromFile(f);
+		mediaScanIntent.setData(contentUri);
+		this.sendBroadcast(mediaScanIntent);
+	}
+
 }
