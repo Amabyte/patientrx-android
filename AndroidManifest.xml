@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -20,11 +22,13 @@
         <activity
             android:name="com.matrix.patientrx.activity.SplashScreenAcitivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name="com.matrix.patientrx.activity.HomeActivity"
@@ -33,10 +37,23 @@
         <activity
             android:name="com.matrix.patientrx.activity.CreateMedicalCaseActivity"
             android:label="@string/title_activity_create_medical_case" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.matrix.patientrx.activity.GoogleLoginActivity"
             android:label="@string/title_activity_login" >
+        </activity>
+        <activity
+            android:name="com.matrix.patientrx.activity.ZoomInZoomOut"
+            android:label="@string/title_activity_home" >
+        </activity>
+        <activity
+            android:name="com.matrix.patientrx.activity.AudioRecordTest"
+            android:label="@string/title_activity_home" >
         </activity>
 
         <meta-data
