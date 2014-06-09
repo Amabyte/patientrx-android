@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,8 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.matrix.patientrx.R;
-import com.matrix.patientrx.activity.AudioRecordTest.PlayButton;
-import com.matrix.patientrx.activity.AudioRecordTest.RecordButton;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.utils.DialogManager;
 
@@ -44,14 +43,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 	boolean mStartRecording = true;
 	private static final String LOG_TAG = "CreateMedicalCaseActivity";
 	private static String mFileName = null;
-
-	private RecordButton mRecordButton = null;
 	private MediaRecorder mRecorder = null;
-
-	private PlayButton mPlayButton = null;
 	private MediaPlayer mPlayer = null;
 	boolean mStartPlaying = true;
-
 	private DialogManager mDialogManager;
 
 	@Override
@@ -126,7 +120,12 @@ public class CreateMedicalCaseActivity extends Activity implements
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
 							// TODO Auto-generated method stub
+							//stopPlaying();
 							mAudioRecordCompleted = false;
+							mTextAudioStatus.setText("Start Recording");
+							mButtonAudio.setBackgroundDrawable(getResources()
+									.getDrawable(R.drawable.record));
+							
 						}
 
 					}, null);
@@ -144,19 +143,34 @@ public class CreateMedicalCaseActivity extends Activity implements
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void startPlaying() {
 		mPlayer = new MediaPlayer();
 		try {
 			mPlayer.setDataSource(mFileName);
+			mPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+				@Override
+				public void onCompletion(MediaPlayer mp) {
+					mButtonAudio.setBackgroundDrawable(getResources()
+							.getDrawable(R.drawable.play));
+					mTextAudioStatus.setText("Start playing");
+				}
+			});
 			mPlayer.prepare();
 			mPlayer.start();
+			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+					R.drawable.stop));
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "prepare() failed");
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void stopPlaying() {
 		mPlayer.release();
+		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.play));
 		mPlayer = null;
 	}
 
@@ -168,6 +182,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void startRecording() {
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -182,10 +197,13 @@ public class CreateMedicalCaseActivity extends Activity implements
 		}
 
 		mRecorder.start();
+		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.stop));
 	}
 
 	private Boolean mAudioRecordCompleted = false;
 
+	@SuppressWarnings("deprecation")
 	private void stopRecording() {
 		mRecorder.stop();
 		mRecorder.release();
@@ -193,7 +211,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 		// TODO enable play the recorded audio
 		mAudioRecordCompleted = true;
 		mEditAudio.setVisibility(View.VISIBLE);
-		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(R.drawable.play));
+		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.play));
 	}
 
 	private void showPictureSelectionOptions() {

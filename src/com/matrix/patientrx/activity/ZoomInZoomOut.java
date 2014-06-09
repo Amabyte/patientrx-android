@@ -59,6 +59,7 @@ public class ZoomInZoomOut extends Activity implements OnTouchListener {
 
 		switch (event.getAction() & MotionEvent.ACTION_MASK) {
 		case MotionEvent.ACTION_DOWN: // first finger down only
+			matrix.set(view.getImageMatrix());
 			savedMatrix.set(matrix);
 			start.set(event.getX(), event.getY());
 			Log.d(TAG, "mode=DRAG"); // write to LogCat
