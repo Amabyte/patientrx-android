@@ -1,5 +1,6 @@
 package com.matrix.patientrx.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -121,6 +122,7 @@ public class ZoomInZoomOut extends Activity implements OnTouchListener {
 	 * ----------------------------------------------------
 	 */
 
+	@SuppressLint("FloatMath")
 	private float spacing(MotionEvent event) {
 		float x = event.getX(0) - event.getX(1);
 		float y = event.getY(0) - event.getY(1);
@@ -141,6 +143,7 @@ public class ZoomInZoomOut extends Activity implements OnTouchListener {
 	}
 
 	/** Show an event in the LogCat view, for debugging */
+	@SuppressWarnings("deprecation")
 	private void dumpEvent(MotionEvent event) {
 		String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE",
 				"POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };

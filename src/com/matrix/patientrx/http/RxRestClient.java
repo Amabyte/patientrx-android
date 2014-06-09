@@ -5,8 +5,6 @@ import android.util.Log;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.matrix.patientrx.constants.Constants;
-import com.matrix.patientrx.utils.Preference;
 
 public class RxRestClient {
 	private static final String BASE_URL = "http://patientrx.herokuapp.com/api/";

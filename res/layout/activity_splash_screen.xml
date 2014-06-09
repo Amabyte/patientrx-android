@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/rx"
     tools:context="${packageName}.${activityClass}" >
 
     <TextView
@@ -10,6 +11,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/patient_rx"
-        android:textSize="18sp" />
+        android:textSize="18sp" 
+        android:textColor="@color/white"/>
 
 </LinearLayout>

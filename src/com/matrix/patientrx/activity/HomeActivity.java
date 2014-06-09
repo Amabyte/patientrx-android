@@ -2,14 +2,6 @@ package com.matrix.patientrx.activity;
 
 import org.apache.http.Header;
 
-import com.google.gson.Gson;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.matrix.patientrx.R;
-import com.matrix.patientrx.constants.Constants;
-import com.matrix.patientrx.models.LoginResponse;
-import com.matrix.patientrx.utils.Preference;
-import com.matrix.patientrx.utils.Utils;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.matrix.patientrx.R;
+import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.utils.Preference;
+import com.matrix.patientrx.utils.Utils;
 
 public class HomeActivity extends Activity implements OnClickListener {
 
@@ -98,8 +97,8 @@ public class HomeActivity extends Activity implements OnClickListener {
 					+ new Gson().toJson(response).toString();
 
 			Log.d("Success", res);
-			Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG)
-					.show();
+//			Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG)
+//					.show();
 			Preference.remove(Constants.SESSION_ID);	
 			finish();
 			startActivity(new Intent(HomeActivity.this,

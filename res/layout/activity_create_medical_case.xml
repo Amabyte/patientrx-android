@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/rx"
     tools:context="${packageName}.${activityClass}" >
 
     <EditText
@@ -16,10 +17,39 @@
         <requestFocus />
     </EditText>
 
+    <Spinner
+        android:id="@+id/spinnerGender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/editName"
+        android:layout_toLeftOf="@+id/editAge" />
+
+    <EditText
+        android:id="@+id/editAge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/spinnerGender"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/spinnerGender"
+        android:layout_below="@id/editName"
+        android:hint="Age"
+        android:inputType="numberDecimal"
+        android:maxLength="3" />
+
+    <EditText
+        android:id="@+id/editDetails"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/editAge"
+        android:gravity="top"
+        android:hint="Enter Details here" />
+
     <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editName"
+        android:layout_below="@id/editDetails"
         android:orientation="horizontal"
         android:weightSum="2" >
 
@@ -37,7 +67,7 @@
 
             <Button
                 android:id="@+id/buttonEditImage"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="Edit"
                 android:visibility="gone" />
@@ -63,11 +93,19 @@
 
             <Button
                 android:id="@+id/buttonEditAudio"
-                android:layout_width="wrap_content"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:text="Edit"
                 android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_marginTop="18dp"
+        android:text="Create Case" />
 
 </RelativeLayout>

@@ -23,6 +23,7 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,19 +34,20 @@ import com.matrix.patientrx.utils.DialogManager;
 public class CreateMedicalCaseActivity extends Activity implements
 		OnClickListener {
 	private static final int IMAGE_GALLERY_PICKER_SELECT = 0;
+	private static final String LOG_TAG = "CreateMedicalCaseActivity";
 	private ImageView mImageView;
 	private Button mEditImageView;
 	private Button mButtonAudio;
 	private TextView mTextAudioStatus;
 	private Button mEditAudio;
+	private Spinner mSpinnerGender;
 	private Boolean mImageSelected = false;
 	private String mImagePath;
-	boolean mStartRecording = true;
-	private static final String LOG_TAG = "CreateMedicalCaseActivity";
-	private static String mFileName = null;
+	private boolean mStartRecording = true;
+	private static String mAudioFileName = null;
 	private MediaRecorder mRecorder = null;
 	private MediaPlayer mPlayer = null;
-	boolean mStartPlaying = true;
+	private boolean mStartPlaying = true;
 	private DialogManager mDialogManager;
 
 	@Override
@@ -53,8 +55,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_medical_case);
 		mDialogManager = new DialogManager();
-		mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-		mFileName += "/audiorecordtest.3gp";
+		mAudioFileName = Environment.getExternalStorageDirectory()
+				.getAbsolutePath();
+		mAudioFileName += "/audiorecordtest.3gp";
 		intializeViews();
 	}
 
@@ -64,10 +67,20 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mTextAudioStatus = (TextView) findViewById(R.id.textRecordStatus);
 		mEditAudio = (Button) findViewById(R.id.buttonEditAudio);
 		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
+		mSpinnerGender = (Spinner) findViewById(R.id.spinnerGender);
+		setGenderSpinner();
 		mImageView.setOnClickListener(this);
 		mEditImageView.setOnClickListener(this);
 		mEditAudio.setOnClickListener(this);
 		mButtonAudio.setOnClickListener(this);
+	}
+
+	private void setGenderSpinner() {
+		String[] gender = { "Male", "Female", "Third" };
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, gender);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mSpinnerGender.setAdapter(adapter);
 	}
 
 	private void recordPauseAudio() {
@@ -117,15 +130,16 @@ public class CreateMedicalCaseActivity extends Activity implements
 					"Alert", "Press OK to erase erase the audio", "OK",
 					"Cancel", new DialogInterface.OnClickListener() {
 
+						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
 							// TODO Auto-generated method stub
-							//stopPlaying();
+							// stopPlaying();
 							mAudioRecordCompleted = false;
 							mTextAudioStatus.setText("Start Recording");
 							mButtonAudio.setBackgroundDrawable(getResources()
 									.getDrawable(R.drawable.record));
-							
+
 						}
 
 					}, null);
@@ -147,7 +161,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private void startPlaying() {
 		mPlayer = new MediaPlayer();
 		try {
-			mPlayer.setDataSource(mFileName);
+			mPlayer.setDataSource(mAudioFileName);
 			mPlayer.setOnCompletionListener(new OnCompletionListener() {
 
 				@Override
@@ -187,7 +201,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-		mRecorder.setOutputFile(mFileName);
+		mRecorder.setOutputFile(mAudioFileName);
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
 		try {

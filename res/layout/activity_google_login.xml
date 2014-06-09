@@ -2,9 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/rx"
+    android:gravity="center"
     android:orientation="vertical"
-    tools:context="${packageName}.${activityClass}"
-    android:gravity="center" >
+    tools:context="${packageName}.${activityClass}" >
 
     <TextView
         android:id="@+id/txtLabel"
