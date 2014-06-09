@@ -32,11 +32,13 @@ import android.widget.Toast;
 
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.listeners.AudioUploadListener;
+import com.matrix.patientrx.listeners.ImageUploadListener;
 import com.matrix.patientrx.utils.DialogManager;
 import com.matrix.patientrx.utils.Utils;
 
 public class CreateMedicalCaseActivity extends Activity implements
-		OnClickListener {
+		OnClickListener, ImageUploadListener, AudioUploadListener {
 	private static final int REQUEST_SELECT_IMAGE_FROM_GALLERY = 0;
 	private static final int REQUEST_TAKE_PHOTO = 1;
 	private static final String LOG_TAG = "CreateMedicalCaseActivity";
@@ -52,8 +54,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private boolean mStartRecording = true;
 	private boolean mImageSelected = false;
 	private boolean mStartPlaying = true;
-	private String mImagePath;
-	private String mAudioFileName = null;
+	private String mImageFilePath;
+	private String mAudioFilePath = null;
 	private MediaRecorder mRecorder = null;
 	private MediaPlayer mPlayer = null;
 
@@ -64,9 +66,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_medical_case);
 		mDialogManager = new DialogManager();
-		mAudioFileName = Environment.getExternalStorageDirectory()
+		mAudioFilePath = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
-		mAudioFileName += "/audiorecordtest.3gp";
+		mAudioFilePath += "/audiorecordtest.3gp";
 		intializeViews();
 	}
 
@@ -86,6 +88,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mEditImageView.setOnClickListener(this);
 		mEditAudio.setOnClickListener(this);
 		mButtonAudio.setOnClickListener(this);
+		findViewById(R.id.buttonSubmit).setOnClickListener(this);
 	}
 
 	@Override
@@ -96,7 +99,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 				// zoom ImageView
 				Intent intent = new Intent(CreateMedicalCaseActivity.this,
 						ZoomInZoomOut.class);
-				intent.putExtra(Constants.EXTRA_IMAGE_PATH, mImagePath);
+				intent.putExtra(Constants.EXTRA_IMAGE_PATH, mImageFilePath);
 				startActivity(intent);
 			} else {
 				showPictureSelectionOptions();
@@ -134,6 +137,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 						}
 					}, null);
 			break;
+		case R.id.buttonSubmit:
+			uploadFiles();
 		}
 
 	}
@@ -160,7 +165,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private void startPlaying() {
 		mPlayer = new MediaPlayer();
 		try {
-			mPlayer.setDataSource(mAudioFileName);
+			mPlayer.setDataSource(mAudioFilePath);
 			mPlayer.setOnCompletionListener(new OnCompletionListener() {
 
 				@Override
@@ -203,7 +208,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-		mRecorder.setOutputFile(mAudioFileName);
+		mRecorder.setOutputFile(mAudioFilePath);
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
 		try {
@@ -285,7 +290,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			// Continue only if the File was successfully created
 			if (photoFile != null) {
 				Uri fileUri = Uri.fromFile(photoFile);
-				mImagePath = fileUri.getPath();
+				mImageFilePath = fileUri.getPath();
 				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 				startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
 			}
@@ -306,7 +311,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 		// Save a file: path for use with ACTION_VIEW intents
 		// mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-		mImagePath = image.getAbsolutePath();
+		mImageFilePath = image.getAbsolutePath();
 		return image;
 	}
 
@@ -327,9 +332,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 				filePathColumn, null, null, null);
 		cursor.moveToFirst();
 		int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-		mImagePath = cursor.getString(columnIndex);
+		mImageFilePath = cursor.getString(columnIndex);
 		cursor.close();
-		Utils.setPic(mImagePath, mImageView);
+		Utils.setPic(mImageFilePath, mImageView);
 	}
 
 	@Override
@@ -348,8 +353,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		if (mImagePath != null) {
-			savedInstanceState.putString(CAPTURED_PHOTO_PATH_KEY, mImagePath);
+		if (mImageFilePath != null) {
+			savedInstanceState.putString(CAPTURED_PHOTO_PATH_KEY,
+					mImageFilePath);
 		}
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -357,7 +363,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		if (savedInstanceState.containsKey(CAPTURED_PHOTO_PATH_KEY)) {
-			mImagePath = savedInstanceState.getString(CAPTURED_PHOTO_PATH_KEY);
+			mImageFilePath = savedInstanceState
+					.getString(CAPTURED_PHOTO_PATH_KEY);
 		}
 		super.onRestoreInstanceState(savedInstanceState);
 	}
@@ -374,9 +381,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 			mEditImageView.setVisibility(View.VISIBLE);
 			break;
 		case REQUEST_TAKE_PHOTO:
-			addPicToGallery(mImagePath);
+			addPicToGallery(mImageFilePath);
 			// Show the full sized image.
-			Utils.setPic(mImagePath, mImageView);
+			Utils.setPic(mImageFilePath, mImageView);
 			mImageSelected = true;
 			mEditImageView.setVisibility(View.VISIBLE);
 			break;
@@ -391,6 +398,36 @@ public class CreateMedicalCaseActivity extends Activity implements
 		Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		this.sendBroadcast(mediaScanIntent);
+	}
+
+	private void uploadFiles() {
+		if (mImageFilePath != null) {
+			Utils.uploadImageToS3(mImageFilePath, this);
+		} else if (mAudioRecordCompleted) {
+			Utils.uploadAudioToS3(mAudioFilePath, this);
+		}
+	}
+
+	@Override
+	public void onImageUploadCompleted(Boolean status) {
+
+		if (status) {
+			if (mAudioRecordCompleted) {
+				Utils.uploadAudioToS3(mAudioFilePath, this);
+			}
+		} else {
+			
+		}
+
+	}
+
+	@Override
+	public void onAudioUploadCompleted(Boolean status) {
+		if (status) {
+			// create case
+		}else{
+			
+		}
 	}
 
 }

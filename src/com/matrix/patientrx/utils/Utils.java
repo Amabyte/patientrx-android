@@ -1,12 +1,25 @@
 package com.matrix.patientrx.utils;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.widget.ImageView;
 
+import com.amazonaws.event.ProgressEvent;
+import com.amazonaws.event.ProgressListener;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.Upload;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.http.RxRestClient;
+import com.matrix.patientrx.listeners.AudioUploadListener;
+import com.matrix.patientrx.listeners.ImageUploadListener;
 
 public class Utils {
 
@@ -28,7 +41,7 @@ public class Utils {
 	public static void logout(JsonHttpResponseHandler asyncHttpResponseHandler) {
 		RxRestClient.delete("patients/sign_out.json", asyncHttpResponseHandler);
 	}
-	
+
 	public static void setPic(String photoPath, ImageView image) {
 		// Get the dimensions of the View
 		int targetW = image.getWidth();
@@ -51,5 +64,69 @@ public class Utils {
 
 		Bitmap bitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
 		image.setImageBitmap(bitmap);
+	}
+
+	public static void uploadImageToS3(String imagePath,
+			final ImageUploadListener listener) {
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+				.format(new Date());
+		String imageFileName = "images/JPEG_" + timeStamp + "_.JPG";
+
+		File file = new File(imagePath);
+		TransferManager tx = AwsTransferManager.getTransferManager();
+		final Upload myUpload = tx.upload(Constants.AWS_S3_VIDEO_BUCKET,
+				imageFileName, file);
+
+		// listener to track upload progress
+		ProgressListener myProgressListener = new ProgressListener() {
+			Boolean isUploadFailed = false;
+
+			@Override
+			public void progressChanged(final ProgressEvent progressEvent) {
+				final int percentage = (int) myUpload.getProgress()
+						.getPercentTransferred();
+				Log.e("Test", "Percentage:" + percentage);
+				if (progressEvent.getEventCode() == ProgressEvent.COMPLETED_EVENT_CODE) {
+					listener.onImageUploadCompleted(true);
+				}
+				if (progressEvent.getEventCode() == ProgressEvent.FAILED_EVENT_CODE) {
+					listener.onImageUploadCompleted(false);
+				}
+			}
+		};
+		// Transfers also allow you to set a ProgressListener to receive
+		// asynchronous notifications about your transfer's progress.
+		myUpload.addProgressListener(myProgressListener);
+	}
+
+	public static void uploadAudioToS3(String imagePath,
+			final AudioUploadListener listener) {
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+				.format(new Date());
+		String imageFileName = "audios/3GP_" + timeStamp + "_.3gp";
+
+		File file = new File(imagePath);
+		TransferManager tx = AwsTransferManager.getTransferManager();
+		final Upload myUpload = tx.upload(Constants.AWS_S3_VIDEO_BUCKET,
+				imageFileName, file);
+
+		// listener to track upload progress
+		ProgressListener myProgressListener = new ProgressListener() {
+			@Override
+			public void progressChanged(final ProgressEvent progressEvent) {
+				final int percentage = (int) myUpload.getProgress()
+						.getPercentTransferred();
+				Log.e("Test", "Percentage:" + percentage);
+				if (progressEvent.getEventCode() == ProgressEvent.COMPLETED_EVENT_CODE) {
+					listener.onAudioUploadCompleted(true);
+				}
+				if (progressEvent.getEventCode() == ProgressEvent.FAILED_EVENT_CODE) {
+					listener.onAudioUploadCompleted(false);
+				}
+			}
+		};
+		// Transfers also allow you to set a ProgressListener to receive
+		// asynchronous notifications about your transfer's progress.
+		myUpload.addProgressListener(myProgressListener);
 	}
 }
