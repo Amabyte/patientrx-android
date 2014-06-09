@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.http.Header;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,16 +27,22 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.listeners.AudioUploadListener;
 import com.matrix.patientrx.listeners.ImageUploadListener;
+import com.matrix.patientrx.models.Case;
+import com.matrix.patientrx.models.LoginResponse;
 import com.matrix.patientrx.utils.DialogManager;
+import com.matrix.patientrx.utils.Preference;
 import com.matrix.patientrx.utils.Utils;
 
 public class CreateMedicalCaseActivity extends Activity implements
@@ -50,6 +58,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private Button mEditImageView;
 	private Button mButtonAudio;
 	private Spinner mSpinnerGender;
+	private EditText mEditAge;
+	private EditText mEditName;
 
 	private boolean mStartRecording = true;
 	private boolean mImageSelected = false;
@@ -70,6 +80,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 				.getAbsolutePath();
 		mAudioFilePath += "/audiorecordtest.3gp";
 		intializeViews();
+		mEditAge.setText("23");
+		mEditName.setText(Preference.getString(Constants.USER_NAME));
 	}
 
 	private void intializeViews() {
@@ -78,8 +90,10 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mTextAudioStatus = (TextView) findViewById(R.id.textRecordStatus);
 		mEditAudio = (Button) findViewById(R.id.buttonEditAudio);
 		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
+		mEditAge = (EditText) findViewById(R.id.editAge);
+		mEditName = (EditText) findViewById(R.id.editName);
 		mSpinnerGender = (Spinner) findViewById(R.id.spinnerGender);
-		String[] gender = { "Male", "Female", "Third" };
+		String[] gender = { "Male", "Female" };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, gender);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -401,6 +415,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 	}
 
 	private void uploadFiles() {
+		mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
+				"Creating case", "Please wait");
 		if (mImageFilePath != null) {
 			Utils.uploadImageToS3(mImageFilePath, this);
 		} else if (mAudioRecordCompleted) {
@@ -414,9 +430,13 @@ public class CreateMedicalCaseActivity extends Activity implements
 		if (status) {
 			if (mAudioRecordCompleted) {
 				Utils.uploadAudioToS3(mAudioFilePath, this);
+			} else {
+				// create case
+				Utils.createCase(CreateMedicalCaseActivity.this,
+						getCaseDetails(), mCreateCaseResponseHandler);
 			}
 		} else {
-			
+			mDialogManager.removeProgressDialog();
 		}
 
 	}
@@ -425,9 +445,45 @@ public class CreateMedicalCaseActivity extends Activity implements
 	public void onAudioUploadCompleted(Boolean status) {
 		if (status) {
 			// create case
-		}else{
-			
+			Utils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
+					mCreateCaseResponseHandler);
+		} else {
+			mDialogManager.removeProgressDialog();
 		}
 	}
 
+	private JsonHttpResponseHandler mCreateCaseResponseHandler = new JsonHttpResponseHandler() {
+
+		@Override
+		public void onSuccess(int statusCode, Header[] headers,
+				org.json.JSONObject response) {
+			mDialogManager.removeProgressDialog();
+			Toast.makeText(getApplicationContext(),
+					"Success:" + new Gson().toJson(response).toString(),
+					Toast.LENGTH_LONG).show();
+		}
+
+		@Override
+		public void onFailure(int statusCode, org.apache.http.Header[] headers,
+				java.lang.Throwable e, org.json.JSONObject errorResponse) {
+			// Response failed :(
+			String err = "onFailure status code:" + statusCode
+					+ " response body:" + errorResponse + " error:" + e
+					+ " headers:" + headers;
+			Log.d("err", err);
+			mDialogManager.removeProgressDialog();
+			Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG)
+					.show();
+
+		}
+
+	};
+
+	private Case getCaseDetails() {
+		Case newCase = new Case();
+		newCase.age = Integer.parseInt(mEditAge.getText().toString());
+		newCase.name = mEditName.getText().toString();
+		newCase.gender = (String) mSpinnerGender.getSelectedItem();
+		return newCase;
+	}
 }

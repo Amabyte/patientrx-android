@@ -1,10 +1,16 @@
 package com.matrix.patientrx.utils;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.http.entity.StringEntity;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -20,6 +26,7 @@ import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.http.RxRestClient;
 import com.matrix.patientrx.listeners.AudioUploadListener;
 import com.matrix.patientrx.listeners.ImageUploadListener;
+import com.matrix.patientrx.models.Case;
 
 public class Utils {
 
@@ -29,6 +36,25 @@ public class Utils {
 		params.put("provider", provider);
 		params.put("token", token);
 		RxRestClient.post("patients/social_login.json", params,
+				asyncHttpResponseHandler);
+	}
+
+	public static void createCase(Context context, Case newCase,
+			JsonHttpResponseHandler asyncHttpResponseHandler) {
+		JSONObject jsonParams = new JSONObject();
+		StringEntity entity = null;
+		try {
+			jsonParams.put("name", newCase.name);
+			jsonParams.put("age", newCase.age);
+			jsonParams.put("gender", newCase.gender);
+			JSONObject caseObject = new JSONObject();
+			caseObject.put("case", jsonParams);
+			entity = new StringEntity(caseObject.toString());
+		} catch (JSONException e) {
+		} catch (UnsupportedEncodingException e) {
+		}
+
+		RxRestClient.post(context, "cases.json", entity,
 				asyncHttpResponseHandler);
 	}
 

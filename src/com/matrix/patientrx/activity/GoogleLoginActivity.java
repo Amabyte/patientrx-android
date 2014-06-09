@@ -89,10 +89,7 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 	}
 
 	private JsonHttpResponseHandler mAsyncHttpResponseHandler = new JsonHttpResponseHandler() {
-		@Override
-		public void onStart() {
-		}
-
+		
 		@Override
 		public void onSuccess(int statusCode, Header[] headers,
 				org.json.JSONObject response) {
@@ -134,19 +131,7 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 			
 		}
 
-		@Override
-		public void onProgress(int bytesWritten, int totalSize) {
-			// Progress notification
-			// Toast.makeText(getApplicationContext(), "onProgress",
-			// Toast.LENGTH_LONG).show();
-		}
-
-		@Override
-		public void onFinish() {
-			// Toast.makeText(getApplicationContext(), "onFinish",
-			// Toast.LENGTH_LONG).show();
-			// Completed the request (either success or failure)
-		}
+		
 	};
 
 	private void saveUserDetails(LoginResponse loginResponse) {

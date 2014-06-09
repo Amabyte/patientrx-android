@@ -1,5 +1,8 @@
 package com.matrix.patientrx.http;
 
+import org.apache.http.entity.StringEntity;
+
+import android.content.Context;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -23,9 +26,16 @@ public class RxRestClient {
 
 	public static void get(String url, RequestParams params,
 			AsyncHttpResponseHandler responseHandler) {
-//		getInstance().addHeader("Cookie",
-//				Preference.getString(Constants.SESSION_ID));
+		// getInstance().addHeader("Cookie",
+		// Preference.getString(Constants.SESSION_ID));
 		getInstance().get(getAbsoluteUrl(url), params, responseHandler);
+	}
+
+	public static void post(Context context, String url, StringEntity entity,
+			AsyncHttpResponseHandler responseHandler) {
+
+		getInstance().post(context, getAbsoluteUrl(url), entity, "application/json",
+				responseHandler);
 	}
 
 	public static void post(String url, RequestParams params,
@@ -36,7 +46,7 @@ public class RxRestClient {
 
 	public static void delete(String url,
 			AsyncHttpResponseHandler responseHandler) {
-		getInstance().delete(getAbsoluteUrl(url),responseHandler);
+		getInstance().delete(getAbsoluteUrl(url), responseHandler);
 	}
 
 	private static String getAbsoluteUrl(String relativeUrl) {
