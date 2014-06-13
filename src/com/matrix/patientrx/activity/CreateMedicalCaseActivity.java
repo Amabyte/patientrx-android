@@ -40,6 +40,7 @@ import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.listeners.AudioUploadListener;
 import com.matrix.patientrx.listeners.ImageUploadListener;
 import com.matrix.patientrx.models.Case;
+import com.matrix.patientrx.models.LoginResponse;
 import com.matrix.patientrx.utils.DialogManager;
 import com.matrix.patientrx.utils.Preference;
 import com.matrix.patientrx.utils.Utils;
@@ -59,6 +60,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private Spinner mSpinnerGender;
 	private EditText mEditAge;
 	private EditText mEditName;
+	private EditText mEditDetails;
 
 	private boolean mStartRecording = true;
 	private boolean mImageSelected = false;
@@ -69,6 +71,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private MediaPlayer mPlayer = null;
 
 	private DialogManager mDialogManager;
+	private String mImageFileName;
+	private String mAudioFileName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
 		mEditAge = (EditText) findViewById(R.id.editAge);
 		mEditName = (EditText) findViewById(R.id.editName);
+		mEditDetails = (EditText) findViewById(R.id.editDetails);
 		mSpinnerGender = (Spinner) findViewById(R.id.spinnerGender);
 		String[] gender = { "Male", "Female" };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -417,13 +422,20 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
 				"Creating case", "Please wait...");
 		if (mImageFilePath != null) {
-			Utils.uploadImageToS3(mImageFilePath, this);
+			uploadImage();
 		} else if (mAudioRecordCompleted) {
-			Utils.uploadAudioToS3(mAudioFilePath, this);
+			uploadAudio();
 		} else {
 			Utils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
 					mCreateCaseResponseHandler);
 		}
+	}
+
+	private void uploadImage() {
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+				.format(new Date());
+		mImageFileName = "images/JPEG_" + timeStamp + "_.JPG";
+		Utils.uploadImageToS3(mImageFilePath, mImageFileName, this);
 	}
 
 	@Override
@@ -433,7 +445,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 			if (mAudioRecordCompleted) {
 				mDialogManager.showProgressDialog(
 						CreateMedicalCaseActivity.this, "Uploading Image...");
-				Utils.uploadAudioToS3(mAudioFilePath, this);
+				uploadAudio();
+
 			} else {
 				mDialogManager.showProgressDialog(
 						CreateMedicalCaseActivity.this, "Creating Case...");
@@ -446,6 +459,14 @@ public class CreateMedicalCaseActivity extends Activity implements
 			// TODO give retry option
 			mDialogManager.removeProgressDialog();
 		}
+
+	}
+
+	private void uploadAudio() {
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+				.format(new Date());
+		mAudioFileName = "audios/3GP_" + timeStamp + "_.3gp";
+		Utils.uploadAudioToS3(mAudioFilePath, mAudioFileName, this);
 
 	}
 
@@ -468,10 +489,17 @@ public class CreateMedicalCaseActivity extends Activity implements
 		@Override
 		public void onSuccess(int statusCode, Header[] headers,
 				org.json.JSONObject response) {
-			mDialogManager.removeProgressDialog();
-			Toast.makeText(getApplicationContext(),
-					"Success:" + new Gson().toJson(response).toString(),
-					Toast.LENGTH_LONG).show();
+			// mDialogManager.removeProgressDialog();
+			Case newCase = new Case();
+			Gson gson = new Gson();
+			newCase = gson.fromJson(response.toString(), newCase.getClass());
+			Utils.createFirstComment(CreateMedicalCaseActivity.this,
+					newCase.getId(), mEditDetails.getText().toString(),
+					mImageFileName, mAudioFileName,
+					mCreateCommentResponseHandler);
+			// Toast.makeText(getApplicationContext(),
+			// "Success:" + new Gson().toJson(response).toString(),
+			// Toast.LENGTH_LONG).show();
 		}
 
 		@Override
@@ -485,6 +513,37 @@ public class CreateMedicalCaseActivity extends Activity implements
 			mDialogManager.removeProgressDialog();
 			Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG)
 					.show();
+
+		}
+
+	};
+
+	private JsonHttpResponseHandler mCreateCommentResponseHandler = new JsonHttpResponseHandler() {
+
+		@Override
+		public void onSuccess(int statusCode, Header[] headers,
+				org.json.JSONObject response) {
+			mDialogManager.removeProgressDialog();
+			// Case newCase = new Case();
+			// Gson gson = new Gson();
+			// newCase = gson.fromJson(response.toString(), newCase.getClass());
+			// Utils.createFirstComment(newCase.getId(),mEditDetails.getText().toString(),mImageFileName,mAudioFileName);
+			Toast.makeText(CreateMedicalCaseActivity.this,
+					"Success:" + new Gson().toJson(response).toString(),
+					Toast.LENGTH_LONG).show();
+		}
+
+		@Override
+		public void onFailure(int statusCode, org.apache.http.Header[] headers,
+				java.lang.Throwable e, org.json.JSONObject errorResponse) {
+			// Response failed :(
+			String err = "onFailure status code:" + statusCode
+					+ " response body:" + errorResponse + " error:" + e
+					+ " headers:" + headers;
+			Log.d("err", err);
+			mDialogManager.removeProgressDialog();
+			Toast.makeText(CreateMedicalCaseActivity.this, err,
+					Toast.LENGTH_LONG).show();
 
 		}
 

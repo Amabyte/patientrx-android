@@ -2,9 +2,6 @@ package com.matrix.patientrx.utils;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
@@ -58,6 +55,40 @@ public class Utils {
 				asyncHttpResponseHandler);
 	}
 
+	public static void createFirstComment(Context context, int id,
+			String message, String imageFileName, String audioFileName,
+			JsonHttpResponseHandler createCommentResponseHandler) {
+		JSONObject jsonParams = new JSONObject();
+		StringEntity entity = null;
+		// {
+		// "case_comment": {
+		// "message": "its a testing message",
+		// "image": "1228332323537123.png",
+		// "audio": "21623421431243612.mp3"
+		// }
+		// }
+		try {
+			jsonParams.put("message", message);
+			if (imageFileName != null && !imageFileName.equals("")) {
+				jsonParams.put("image", imageFileName);
+			}
+			if (audioFileName != null && !audioFileName.equals("")) {
+				jsonParams.put("audio", audioFileName);
+			}
+			JSONObject caseObject = new JSONObject();
+			caseObject.put("case_comment", jsonParams);
+			entity = new StringEntity(caseObject.toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String url = "cases/" + id + "/case_comments.json";
+		RxRestClient.post(context, url, entity, createCommentResponseHandler);
+	}
+
 	public static void getProfile(
 			JsonHttpResponseHandler jsonHttpResponseHandler) {
 		RxRestClient
@@ -97,12 +128,8 @@ public class Utils {
 		image.setImageBitmap(bitmap);
 	}
 
-	public static void uploadImageToS3(String imagePath,
+	public static void uploadImageToS3(String imagePath, String imageFileName,
 			final ImageUploadListener listener) {
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-				.format(new Date());
-		String imageFileName = "images/JPEG_" + timeStamp + "_.JPG";
-
 		File file = new File(imagePath);
 		TransferManager tx = AwsTransferManager.getTransferManager();
 		final Upload myUpload = tx.upload(Constants.AWS_S3_VIDEO_BUCKET,
@@ -129,12 +156,8 @@ public class Utils {
 		myUpload.addProgressListener(myProgressListener);
 	}
 
-	public static void uploadAudioToS3(String imagePath,
+	public static void uploadAudioToS3(String imagePath, String imageFileName,
 			final AudioUploadListener listener) {
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-				.format(new Date());
-		String imageFileName = "audios/3GP_" + timeStamp + "_.3gp";
-
 		File file = new File(imagePath);
 		TransferManager tx = AwsTransferManager.getTransferManager();
 		final Upload myUpload = tx.upload(Constants.AWS_S3_VIDEO_BUCKET,
@@ -159,4 +182,5 @@ public class Utils {
 		// asynchronous notifications about your transfer's progress.
 		myUpload.addProgressListener(myProgressListener);
 	}
+
 }
