@@ -112,7 +112,7 @@ public class GoogleLoginActivity extends Activity implements OnClickListener {
 			saveUserDetails(loginResponse);
 			progressDialog.dismiss();
 			startActivity(new Intent(GoogleLoginActivity.this,
-					HomeActivity.class));
+					HomeScreenActivity.class));
 			finish();
 		}
 

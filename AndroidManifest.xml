@@ -32,6 +32,10 @@
             android:name="com.matrix.patientrx.activity.HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
+         <activity
+            android:name="com.matrix.patientrx.activity.HomeScreenActivity"
+            android:label="@string/title_activity_home" >
+        </activity>
         <activity
             android:name="com.matrix.patientrx.activity.CreateMedicalCaseActivity"
             android:label="@string/title_activity_create_medical_case" >

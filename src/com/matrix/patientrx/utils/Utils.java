@@ -31,12 +31,12 @@ import com.matrix.patientrx.models.Case;
 public class Utils {
 
 	public static void loginToPatientRx(String provider, String token,
-			JsonHttpResponseHandler asyncHttpResponseHandler) {
+			JsonHttpResponseHandler jsonHttpResponseHandler) {
 		RequestParams params = new RequestParams();
 		params.put("provider", provider);
 		params.put("token", token);
 		RxRestClient.post("patients/social_login.json", params,
-				asyncHttpResponseHandler);
+				jsonHttpResponseHandler);
 	}
 
 	public static void createCase(Context context, Case newCase,
@@ -44,9 +44,9 @@ public class Utils {
 		JSONObject jsonParams = new JSONObject();
 		StringEntity entity = null;
 		try {
-			jsonParams.put("name", newCase.name);
-			jsonParams.put("age", newCase.age);
-			jsonParams.put("gender", newCase.gender);
+			jsonParams.put("name", newCase.getName());
+			jsonParams.put("age", newCase.getAge());
+			jsonParams.put("gender", newCase.getGender());
 			JSONObject caseObject = new JSONObject();
 			caseObject.put("case", jsonParams);
 			entity = new StringEntity(caseObject.toString());
@@ -59,13 +59,18 @@ public class Utils {
 	}
 
 	public static void getProfile(
-			JsonHttpResponseHandler asyncHttpResponseHandler) {
-		RxRestClient.get("patients/profile.json", null,
-				asyncHttpResponseHandler);
+			JsonHttpResponseHandler jsonHttpResponseHandler) {
+		RxRestClient
+				.get("patients/profile.json", null, jsonHttpResponseHandler);
 	}
 
-	public static void logout(JsonHttpResponseHandler asyncHttpResponseHandler) {
-		RxRestClient.delete("patients/sign_out.json", asyncHttpResponseHandler);
+	public static void logout(JsonHttpResponseHandler jsonHttpResponseHandler) {
+		RxRestClient.delete("patients/sign_out.json", jsonHttpResponseHandler);
+	}
+
+	public static void getAllCasess(
+			JsonHttpResponseHandler asyncHttpResponseHandler) {
+		RxRestClient.get("cases.json", null, asyncHttpResponseHandler);
 	}
 
 	public static void setPic(String photoPath, ImageView image) {
@@ -105,7 +110,6 @@ public class Utils {
 
 		// listener to track upload progress
 		ProgressListener myProgressListener = new ProgressListener() {
-			Boolean isUploadFailed = false;
 
 			@Override
 			public void progressChanged(final ProgressEvent progressEvent) {

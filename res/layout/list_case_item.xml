@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <ImageView
+        android:id="@+id/imgDocReply"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/doc_reply" />
+
+    <TextView
+        android:id="@+id/textDocReply"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:text="3" />
+
+    <TextView
+        android:id="@+id/textCaseDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/imgDocReply"
+        android:text="Fever"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textCaseId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/textCaseDescription"
+        android:padding="5dp"
+        android:text="#234"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textPatientName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textCaseDescription"
+        android:layout_toRightOf="@id/textCaseId"
+        android:padding="5dp"
+        android:text="Vishal Vijay"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textCaseTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/imgDocReply"
+        android:text="5th June 14 v11:21 AM"
+        android:textSize="14sp" />
+
+</RelativeLayout>

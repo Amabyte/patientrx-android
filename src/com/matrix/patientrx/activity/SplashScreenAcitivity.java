@@ -26,7 +26,7 @@ public class SplashScreenAcitivity extends Activity {
 			public void run() {
 				if (Preference.getString(Constants.SESSION_ID) != null) {
 					startActivity(new Intent(SplashScreenAcitivity.this,
-							HomeActivity.class));
+							HomeScreenActivity.class));
 				} else {
 					// TODO uncomment this after implementing facebook login
 					// startActivity(new Intent(SplashScreenAcitivity.this,

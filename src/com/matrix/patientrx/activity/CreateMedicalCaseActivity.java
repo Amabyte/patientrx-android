@@ -481,9 +481,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 	private Case getCaseDetails() {
 		Case newCase = new Case();
-		newCase.age = Integer.parseInt(mEditAge.getText().toString());
-		newCase.name = mEditName.getText().toString();
-		newCase.gender = (String) mSpinnerGender.getSelectedItem();
+		newCase.setAge(Integer.parseInt(mEditAge.getText().toString()));
+		newCase.setName(mEditName.getText().toString());
+		newCase.setGender((String) mSpinnerGender.getSelectedItem());
 		return newCase;
 	}
 }

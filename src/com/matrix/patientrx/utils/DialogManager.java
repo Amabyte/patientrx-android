@@ -13,10 +13,10 @@ import com.matrix.patientrx.R;
 public class DialogManager {
 
 	/** The dialog. */
-	private AlertDialog dialog = null;
+	private static AlertDialog dialog = null;
 
 	/** The progress dialog. */
-	private ProgressDialog progressDialog = null;
+	private static ProgressDialog progressDialog = null;
 
 	/**
 	 * Show progress dialog.
@@ -26,7 +26,7 @@ public class DialogManager {
 	 * @param msg
 	 *            the msg
 	 */
-	public void showProgressDialog(final Context context, String msg) {
+	public static void showProgressDialog(final Context context, String msg) {
 		if (progressDialog == null) {
 			progressDialog = new ProgressDialog(context);
 			progressDialog.setCancelable(false);
@@ -48,7 +48,7 @@ public class DialogManager {
 	 * @param msg
 	 *            the msg
 	 */
-	public void showProgressDialog(final Context context, String title,
+	public static void showProgressDialog(final Context context, String title,
 			String msg) {
 		if (progressDialog == null) {
 			progressDialog = new ProgressDialog(context);
@@ -65,7 +65,7 @@ public class DialogManager {
 	/**
 	 * Removes the progress dialog.
 	 */
-	public void removeProgressDialog() {
+	public static void removeProgressDialog() {
 		if (null != progressDialog && progressDialog.isShowing()) {
 			progressDialog.dismiss();
 		}
@@ -85,7 +85,7 @@ public class DialogManager {
 	 * @param onClickListener
 	 *            the on click listener
 	 */
-	public void showAlertDialog(final Context context, String title,
+	public static void showAlertDialog(final Context context, String title,
 			String msg, String btnText,
 			DialogInterface.OnClickListener onClickListener) {
 
@@ -115,7 +115,7 @@ public class DialogManager {
 	 * @param negativeBtnListener
 	 *            the negative btn listener
 	 */
-	public void showAlertDialog(final Context context, String title,
+	public static void showAlertDialog(final Context context, String title,
 			String msg, String positiveBtnName, String negativeBtnName,
 			DialogInterface.OnClickListener postiveBtnListener,
 			DialogInterface.OnClickListener negativeBtnListener) {
@@ -131,7 +131,7 @@ public class DialogManager {
 
 	}
 
-	public void showNetworkErrorDialog(final Context context,
+	public static void showNetworkErrorDialog(final Context context,
 			DialogInterface.OnClickListener onClickListener) {
 
 		AlertDialog.Builder alertErrorBuilder = new AlertDialog.Builder(context);
@@ -149,7 +149,7 @@ public class DialogManager {
 	/**
 	 * Dismiss alert dialog.
 	 */
-	public void dismissAlertDialog() {
+	public static void dismissAlertDialog() {
 		if (null != dialog && dialog.isShowing()) {
 			dialog.dismiss();
 		}
