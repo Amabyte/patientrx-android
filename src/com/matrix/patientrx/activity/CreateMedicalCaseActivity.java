@@ -40,7 +40,6 @@ import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.listeners.AudioUploadListener;
 import com.matrix.patientrx.listeners.ImageUploadListener;
 import com.matrix.patientrx.models.Case;
-import com.matrix.patientrx.models.LoginResponse;
 import com.matrix.patientrx.utils.DialogManager;
 import com.matrix.patientrx.utils.Preference;
 import com.matrix.patientrx.utils.Utils;
@@ -75,10 +74,10 @@ public class CreateMedicalCaseActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_medical_case);
-		mDialogManager = new DialogManager();
 		mAudioFilePath = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
 		mAudioFilePath += "/audiorecordtest.3gp";
+		mDialogManager = new DialogManager();
 		intializeViews();
 		mEditAge.setText("23");
 		mEditName.setText(Preference.getString(Constants.USER_NAME));
@@ -152,7 +151,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 					}, null);
 			break;
 		case R.id.buttonSubmit:
-			uploadFiles();
+			createNewCase();
 		}
 
 	}
@@ -414,13 +413,16 @@ public class CreateMedicalCaseActivity extends Activity implements
 		this.sendBroadcast(mediaScanIntent);
 	}
 
-	private void uploadFiles() {
+	private void createNewCase() {
 		mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
-				"Creating case", "Please wait");
+				"Creating case", "Please wait...");
 		if (mImageFilePath != null) {
 			Utils.uploadImageToS3(mImageFilePath, this);
 		} else if (mAudioRecordCompleted) {
 			Utils.uploadAudioToS3(mAudioFilePath, this);
+		} else {
+			Utils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
+					mCreateCaseResponseHandler);
 		}
 	}
 
@@ -429,13 +431,19 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 		if (status) {
 			if (mAudioRecordCompleted) {
+				mDialogManager.showProgressDialog(
+						CreateMedicalCaseActivity.this, "Uploading Image...");
 				Utils.uploadAudioToS3(mAudioFilePath, this);
 			} else {
+				mDialogManager.showProgressDialog(
+						CreateMedicalCaseActivity.this, "Creating Case...");
 				// create case
 				Utils.createCase(CreateMedicalCaseActivity.this,
 						getCaseDetails(), mCreateCaseResponseHandler);
 			}
 		} else {
+			// upload failure
+			// TODO give retry option
 			mDialogManager.removeProgressDialog();
 		}
 
@@ -444,10 +452,13 @@ public class CreateMedicalCaseActivity extends Activity implements
 	@Override
 	public void onAudioUploadCompleted(Boolean status) {
 		if (status) {
+			mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
+					"Creating case...");
 			// create case
 			Utils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
 					mCreateCaseResponseHandler);
 		} else {
+			// TODO give retry option
 			mDialogManager.removeProgressDialog();
 		}
 	}

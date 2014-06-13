@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.models.Case;
+import com.matrix.patientrx.models.Comment;
 
 public class CaseListAdapter extends BaseAdapter {
 	private ArrayList<Case> mCaseList;
@@ -71,9 +72,12 @@ public class CaseListAdapter extends BaseAdapter {
 			holder.imgDocReply.setVisibility(View.INVISIBLE);
 			holder.textDocReply.setVisibility(View.INVISIBLE);
 		}
-		
-		holder.textCaseDescription.setText("Fever");
-		holder.textCaseId.setText(caseItem.getId()+"");
+		Comment comment=caseItem.getFirst_case_comment();
+		if(comment!=null)
+			holder.textCaseDescription.setText(comment.getMessage());
+		else
+			holder.textCaseDescription.setText("");
+		holder.textCaseId.setText("# " + caseItem.getId());
 		holder.textCaseTime.setText(caseItem.getUpdated_at());
 		holder.textPatientName.setText(caseItem.getName());
 		return convertView;

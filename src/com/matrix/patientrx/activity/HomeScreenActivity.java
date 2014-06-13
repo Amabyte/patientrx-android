@@ -15,26 +15,25 @@ import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.amazonaws.services.s3.model.BucketNotificationConfiguration.TopicConfiguration;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.adapter.CaseListAdapter;
 import com.matrix.patientrx.models.Case;
-import com.matrix.patientrx.models.CaseListResponse;
 import com.matrix.patientrx.utils.DialogManager;
 import com.matrix.patientrx.utils.Utils;
 
 public class HomeScreenActivity extends Activity implements OnClickListener {
-
 	private ListView listViewCase;
+	private DialogManager mDialogManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home_screen);
 		initialiseViews();
+		mDialogManager = new DialogManager();
 	}
 
 	private void initialiseViews() {
@@ -44,7 +43,7 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onResume() {
-		DialogManager.showProgressDialog(HomeScreenActivity.this, "Loading...");
+		mDialogManager.showProgressDialog(HomeScreenActivity.this, "Loading...");
 		Utils.getAllCasess(mGetAllCasesResponseHanlder);
 		super.onResume();
 	}
@@ -63,26 +62,23 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 		@Override
 		public void onSuccess(int statusCode, Header[] headers,
 				org.json.JSONArray response) {
-			String res = "Status code: " + statusCode + " response:"
-					+ new Gson().toJson(response).toString();
-
+			// String res = "Status code: " + statusCode + " response:"
+			// + new Gson().toJson(response).toString();
 			// Log.d("Success", res);
 			// Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG)
 			// .show();
-
 			ArrayList<Case> caseList = new ArrayList<Case>();
 			Gson gson = new Gson();
 			Type type = new TypeToken<List<Case>>() {
 			}.getType();
 			caseList = gson.fromJson(response.toString(), type);
-			Toast.makeText(getApplicationContext(),
-					"Name:" + caseList.get(0).getName(), Toast.LENGTH_LONG)
-					.show();
+			// Toast.makeText(getApplicationContext(),
+			// "Name:" + caseList.get(0).getName(), Toast.LENGTH_LONG)
+			// .show();
 			CaseListAdapter caseListAdapter = new CaseListAdapter(
 					HomeScreenActivity.this, caseList);
 			listViewCase.setAdapter(caseListAdapter);
-
-			DialogManager.removeProgressDialog();
+			mDialogManager.removeProgressDialog();
 		}
 
 		@Override
@@ -93,7 +89,7 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 					+ " response body:" + errorResponse + " error:" + e
 					+ " headers:" + headers;
 			Log.d("err", err);
-			DialogManager.removeProgressDialog();
+			mDialogManager.removeProgressDialog();
 			Toast.makeText(HomeScreenActivity.this, err, Toast.LENGTH_LONG)
 					.show();
 		}
