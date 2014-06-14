@@ -2,6 +2,7 @@ package com.matrix.patientrx.activity;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.Header;
@@ -25,8 +26,11 @@ import com.matrix.patientrx.utils.DialogManager;
 import com.matrix.patientrx.utils.Utils;
 
 public class HomeScreenActivity extends Activity implements OnClickListener {
+	private static final int REQUEST_CREATE_NEW_CASE = 0;
+	private static final int TIME_BETWEEN_HOME_SCREEN_REFRESH = 30000;// 30 sec
 	private ListView listViewCase;
 	private DialogManager mDialogManager;
+	private Date lastRefreshTime;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,10 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_home_screen);
 		initialiseViews();
 		mDialogManager = new DialogManager();
+		lastRefreshTime = new Date();
+		mDialogManager
+				.showProgressDialog(HomeScreenActivity.this, "Loading...");
+		Utils.getAllCasess(mGetAllCasesResponseHanlder);
 	}
 
 	private void initialiseViews() {
@@ -43,8 +51,13 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onResume() {
-		mDialogManager.showProgressDialog(HomeScreenActivity.this, "Loading...");
-		Utils.getAllCasess(mGetAllCasesResponseHanlder);
+		long curTime = new Date().getTime();
+		if ((curTime - lastRefreshTime.getTime()) > TIME_BETWEEN_HOME_SCREEN_REFRESH) {
+			mDialogManager.showProgressDialog(HomeScreenActivity.this,
+					"Loading...");
+			Utils.getAllCasess(mGetAllCasesResponseHanlder);
+			lastRefreshTime.setTime(curTime);
+		}
 		super.onResume();
 	}
 
@@ -52,8 +65,8 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.buttonCreateNewCase:
-			startActivity(new Intent(HomeScreenActivity.this,
-					CreateMedicalCaseActivity.class));
+			startActivityForResult((new Intent(HomeScreenActivity.this,
+					CreateMedicalCaseActivity.class)), REQUEST_CREATE_NEW_CASE);
 			break;
 		}
 	}
@@ -94,5 +107,17 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 					.show();
 		}
 
+	};
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != RESULT_OK)
+			return;
+		switch (requestCode) {
+		case REQUEST_CREATE_NEW_CASE:
+			mDialogManager.showProgressDialog(HomeScreenActivity.this,
+					"Loading...");
+			Utils.getAllCasess(mGetAllCasesResponseHanlder);
+			break;
+		}
 	};
 }

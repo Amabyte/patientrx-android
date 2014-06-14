@@ -40,7 +40,6 @@ import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.listeners.AudioUploadListener;
 import com.matrix.patientrx.listeners.ImageUploadListener;
 import com.matrix.patientrx.models.Case;
-import com.matrix.patientrx.models.LoginResponse;
 import com.matrix.patientrx.utils.DialogManager;
 import com.matrix.patientrx.utils.Preference;
 import com.matrix.patientrx.utils.Utils;
@@ -434,7 +433,11 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private void uploadImage() {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
-		mImageFileName = "images/JPEG_" + timeStamp + "_.JPG";
+		String s[] = mImageFilePath.split("/");
+		String k = s[s.length - 1];
+		String l[] = k.split("\\.");
+		String ext = l[1];
+		mImageFileName = "images/JPEG_" + timeStamp + ext;
 		Utils.uploadImageToS3(mImageFilePath, mImageFileName, this);
 	}
 
@@ -528,9 +531,11 @@ public class CreateMedicalCaseActivity extends Activity implements
 			// Gson gson = new Gson();
 			// newCase = gson.fromJson(response.toString(), newCase.getClass());
 			// Utils.createFirstComment(newCase.getId(),mEditDetails.getText().toString(),mImageFileName,mAudioFileName);
-			Toast.makeText(CreateMedicalCaseActivity.this,
-					"Success:" + new Gson().toJson(response).toString(),
-					Toast.LENGTH_LONG).show();
+			// Toast.makeText(CreateMedicalCaseActivity.this,
+			// "Success:" + new Gson().toJson(response).toString(),
+			// Toast.LENGTH_LONG).show();
+			setResult(RESULT_OK);
+			finish();
 		}
 
 		@Override

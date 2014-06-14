@@ -21,5 +21,6 @@
     <string name="text_network_error">Please check your internet connection and try again.</string>
     <string name="text_alert">Alert</string>
     <string name="text_ok">Ok</string>
+    <string name="button_new_case_label">+ New Case</string>
 
 </resources>
