@@ -57,8 +57,6 @@ public class HomeActivity extends Activity implements OnClickListener {
 	}
 
 	private void logout() {
-//		Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_LONG)
-//				.show();
 		Utils.logout(mLogoutResponseHandler);
 	}
 

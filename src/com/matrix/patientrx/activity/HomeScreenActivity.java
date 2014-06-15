@@ -21,8 +21,10 @@ import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.adapter.CaseListAdapter;
+import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.models.Case;
 import com.matrix.patientrx.utils.DialogManager;
+import com.matrix.patientrx.utils.Preference;
 import com.matrix.patientrx.utils.Utils;
 
 public class HomeScreenActivity extends Activity implements OnClickListener {
@@ -46,6 +48,7 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 
 	private void initialiseViews() {
 		findViewById(R.id.buttonCreateNewCase).setOnClickListener(this);
+		findViewById(R.id.buttonLogout).setOnClickListener(this);
 		listViewCase = (ListView) findViewById(R.id.listViewCase);
 	}
 
@@ -68,8 +71,47 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 			startActivityForResult((new Intent(HomeScreenActivity.this,
 					CreateMedicalCaseActivity.class)), REQUEST_CREATE_NEW_CASE);
 			break;
+		case R.id.buttonLogout:
+			logout();
+			break;
 		}
 	}
+
+	private void logout() {
+		Utils.logout(mLogoutResponseHandler);
+	}
+
+	private JsonHttpResponseHandler mLogoutResponseHandler = new JsonHttpResponseHandler() {
+		@Override
+		public void onSuccess(int statusCode, Header[] headers,
+				org.json.JSONObject response) {
+			String res = "Status code: " + statusCode + " response:"
+					+ new Gson().toJson(response).toString();
+
+			Log.d("Success", res);
+			// Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG)
+			// .show();
+			Preference.remove(Constants.SESSION_ID);
+			finish();
+			startActivity(new Intent(HomeScreenActivity.this,
+					GoogleLoginActivity.class));
+		}
+
+		@Override
+		public void onFailure(int statusCode, org.apache.http.Header[] headers,
+				java.lang.Throwable e, org.json.JSONObject errorResponse) {
+			// Response failed :(
+			String err = "onFailure status code:" + statusCode
+					+ " response body:" + errorResponse + " error:" + e
+					+ " headers:" + headers;
+			Log.d("err", err);
+
+			Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG)
+					.show();
+
+		}
+
+	};
 
 	private JsonHttpResponseHandler mGetAllCasesResponseHanlder = new JsonHttpResponseHandler() {
 		@Override
