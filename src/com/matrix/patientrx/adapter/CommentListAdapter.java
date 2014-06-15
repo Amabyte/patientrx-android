@@ -14,14 +14,17 @@ import android.widget.TextView;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.models.Comment;
 import com.matrix.patientrx.utils.Utils;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class CommentListAdapter extends BaseAdapter {
 	private ArrayList<Comment> mCommentList;
 	private Context mContext;
+	protected ImageLoader mImageLoader;
 
 	public CommentListAdapter(Context context, ArrayList<Comment> commentList) {
 		mContext = context;
 		mCommentList = commentList;
+		mImageLoader = ImageLoader.getInstance();
 	}
 
 	@Override
@@ -78,6 +81,11 @@ public class CommentListAdapter extends BaseAdapter {
 			holder.patientCommentView.setVisibility(View.VISIBLE);
 			holder.docCommentView.setVisibility(View.GONE);
 			holder.textMessage.setText(comment.getMessage());
+			if ((comment.getImage_url() != null)
+					&& (!comment.getImage_url().equals("")))
+				mImageLoader.displayImage(comment.getImage_url(), holder.img);
+			
+
 			// patient comment
 		} else {
 			// doc comment

@@ -82,6 +82,8 @@ public class Comment implements Parcelable {
 	}
 
 	public String getImage_url() {
+		// return
+		// "https://lh6.googleusercontent.com/-55osAWw3x0Q/URquUtcFr5I/AAAAAAAAAbs/rWlj1RUKrYI/s1024/A%252520Photographer.jpg";
 		return image_url;
 	}
 
