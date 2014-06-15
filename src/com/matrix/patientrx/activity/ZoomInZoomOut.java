@@ -2,7 +2,7 @@ package com.matrix.patientrx.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
- import android.graphics.Matrix;
+import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.FloatMath;
@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.utils.Utils;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ZoomInZoomOut extends Activity implements OnTouchListener {
 	private static final String TAG = "Touch";
@@ -38,7 +39,9 @@ public class ZoomInZoomOut extends Activity implements OnTouchListener {
 	float oldDist = 1f;
 
 	private String mImagePath;
+	private String mImageUrl;
 	private ImageView imageView;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,14 +50,20 @@ public class ZoomInZoomOut extends Activity implements OnTouchListener {
 		setContentView(R.layout.activity_zoom_image);
 		imageView = (ImageView) findViewById(R.id.imageView);
 		mImagePath = getIntent().getStringExtra(Constants.EXTRA_IMAGE_PATH);
+		mImageUrl = getIntent().getStringExtra(Constants.EXTRA_IMAGE_URL);
 		imageView.setOnTouchListener(this);
 	}
-	@Override 
-	public void onWindowFocusChanged(boolean hasFocus) { 
-		// TODO Auto-generated method stub 
-		super.onWindowFocusChanged(hasFocus); 
-		Utils.setPic(mImagePath, imageView);
-		//Here you can get the size! 
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		// TODO Auto-generated method stub
+		super.onWindowFocusChanged(hasFocus);
+		if (mImagePath != null) {
+			Utils.setPic(mImagePath, imageView);
+		} else {
+			ImageLoader.getInstance().displayImage(mImageUrl, imageView);
+		}
+		// Here you can get the size!
 	}
 
 	@Override
