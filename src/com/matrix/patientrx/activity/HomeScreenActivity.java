@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -50,7 +52,24 @@ public class HomeScreenActivity extends Activity implements OnClickListener {
 		findViewById(R.id.buttonCreateNewCase).setOnClickListener(this);
 		findViewById(R.id.buttonLogout).setOnClickListener(this);
 		listViewCase = (ListView) findViewById(R.id.listViewCase);
+		listViewCase.setOnItemClickListener(listCaseItemClickListener);
+
 	}
+
+	OnItemClickListener listCaseItemClickListener = new OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> adapter, View view, int pos,
+				long id) {
+			Case caseItem = (Case) adapter.getItemAtPosition(pos);
+			Intent intent = new Intent(HomeScreenActivity.this,
+					ViewCaseDetailActivity.class);
+			intent.putExtra(Constants.EXTRA_CASE, caseItem);
+			startActivity(intent);
+			Toast.makeText(HomeScreenActivity.this,
+					"List item:" + caseItem.getName(), Toast.LENGTH_SHORT)
+					.show();
+		}
+	};
 
 	@Override
 	protected void onResume() {

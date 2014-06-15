@@ -41,6 +41,10 @@
             android:label="@string/title_activity_create_medical_case" >
         </activity>
         <activity
+            android:name="com.matrix.patientrx.activity.ViewCaseDetailActivity"
+            android:label="@string/title_activity_view_case_detail" >
+        </activity>
+        <activity
             android:name="com.matrix.patientrx.activity.GoogleLoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
