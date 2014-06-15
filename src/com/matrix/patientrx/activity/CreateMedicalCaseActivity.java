@@ -55,7 +55,8 @@ import com.matrix.patientrx.utils.Utils;
 public class CreateMedicalCaseActivity extends Activity implements
 		OnClickListener, ImageUploadListener, AudioUploadListener {
 	private static final int REQUEST_SELECT_IMAGE_FROM_GALLERY = 0;
-	private static final int REQUEST_TAKE_PHOTO = 1;
+	private static final int REQUEST_SELECT_AUDIO_FROM_GALLERY = 1;
+	private static final int REQUEST_TAKE_PHOTO = 2;
 	private static final String LOG_TAG = "CreateMedicalCaseActivity";
 	private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
 
@@ -85,9 +86,6 @@ public class CreateMedicalCaseActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_medical_case);
-		mAudioFilePath = Environment.getExternalStorageDirectory()
-				.getAbsolutePath();
-		mAudioFilePath += "/audiorecordtest.3gp";
 		mDialogManager = new DialogManager();
 		intializeViews();
 		mEditAge.setText("23");
@@ -116,10 +114,17 @@ public class CreateMedicalCaseActivity extends Activity implements
 		findViewById(R.id.buttonSubmit).setOnClickListener(this);
 	}
 
+	private Boolean noAudioSelected = true;
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.img:
+			// TODO stop playing audio when user clicks on image selection
+			// if (mStartPlaying) {
+			// mStartPlaying = false;
+			// startStopPlaying();
+			// }
 			if (mImageSelected) {
 				// zoom ImageView
 				Intent intent = new Intent(CreateMedicalCaseActivity.this,
@@ -134,33 +139,32 @@ public class CreateMedicalCaseActivity extends Activity implements
 			showPictureSelectionOptions();
 			break;
 		case R.id.buttonRecordAudio:
-			if (!mAudioRecordCompleted) {
-				recordPauseAudio();
-			} else {
-				// play recorded file
-				onPlay(mStartPlaying);
-				if (mStartPlaying) {
-					mTextAudioStatus.setText("Stop playing");
+			if (noAudioSelected)
+				showAudioSelectionOptions();
+			else {
+				if (!mAudioRecordCompleted) {
+					recordStopAudio();
 				} else {
-					mTextAudioStatus.setText("Start playing");
+					startStopPlaying();
+
 				}
-				mStartPlaying = !mStartPlaying;
 			}
 			break;
 		case R.id.buttonEditAudio:
-			mDialogManager.showAlertDialog(CreateMedicalCaseActivity.this,
-					"Alert", "Press OK to erase erase the audio", "OK",
-					"Cancel", new DialogInterface.OnClickListener() {
-						@SuppressWarnings("deprecation")
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							mAudioRecordCompleted = false;
-							mTextAudioStatus.setText("Start Recording");
-							mButtonAudio.setBackgroundDrawable(getResources()
-									.getDrawable(R.drawable.record));
-							mEditAudio.setVisibility(View.INVISIBLE);
-						}
-					}, null);
+			showAudioSelectionOptions();
+			// mDialogManager.showAlertDialog(CreateMedicalCaseActivity.this,
+			// "Alert", "Press OK to erase erase the audio", "OK",
+			// "Cancel", new DialogInterface.OnClickListener() {
+			// @SuppressWarnings("deprecation")
+			// @Override
+			// public void onClick(DialogInterface arg0, int arg1) {
+			// mAudioRecordCompleted = false;
+			// mTextAudioStatus.setText("Start Recording");
+			// mButtonAudio.setBackgroundDrawable(getResources()
+			// .getDrawable(R.drawable.record));
+			// mEditAudio.setVisibility(View.INVISIBLE);
+			// }
+			// }, null);
 			break;
 		case R.id.buttonSubmit:
 			createNewCase();
@@ -168,7 +172,19 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 	}
 
-	private void recordPauseAudio() {
+	private void startStopPlaying() {
+		// play recorded file
+		onPlay(mStartPlaying);
+		if (mStartPlaying) {
+			mTextAudioStatus.setText("Stop playing");
+		} else {
+			mTextAudioStatus.setText("Start playing");
+		}
+		mStartPlaying = !mStartPlaying;
+	}
+
+	private void recordStopAudio() {
+		noAudioSelected = false;
 		if (mStartRecording) {
 			mTextAudioStatus.setText("Stop recording");
 		} else {
@@ -230,6 +246,11 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 	@SuppressWarnings("deprecation")
 	private void startRecording() {
+		mAudioFilePath = Environment.getExternalStorageDirectory()
+				.getAbsolutePath();
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+				.format(new Date());
+		mAudioFilePath += "/audio" + timeStamp + ".3gp";
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -282,6 +303,34 @@ public class CreateMedicalCaseActivity extends Activity implements
 					}
 
 				}).create().show();
+	}
+
+	private void showAudioSelectionOptions() {
+		String[] items = new String[] { "Record Audio", "Select From gallery" };
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_dropdown_item, items);
+		new AlertDialog.Builder(this).setTitle("Audio Selector")
+				.setAdapter(adapter, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == 0) {
+							recordStopAudio();
+						} else {
+							selectAudioFromGallery();
+						}
+						dialog.dismiss();
+					}
+
+				}).create().show();
+	}
+
+	private void selectAudioFromGallery() {
+		Intent intent_upload = new Intent();
+		intent_upload.setType("audio/*");
+		intent_upload.setAction(Intent.ACTION_GET_CONTENT);
+		startActivityForResult(intent_upload, REQUEST_SELECT_AUDIO_FROM_GALLERY);
+
 	}
 
 	/** * Start the camera by dispatching a camera intent. */
@@ -414,8 +463,39 @@ public class CreateMedicalCaseActivity extends Activity implements
 			mImageSelected = true;
 			mEditImageView.setVisibility(View.VISIBLE);
 			break;
+		case REQUEST_SELECT_AUDIO_FROM_GALLERY:
+			// the selected audio.
+			Uri uri = data.getData();
+			mAudioFilePath = getRealPathFromURI(CreateMedicalCaseActivity.this,
+					uri);
+			mAudioRecordCompleted = true;
+			noAudioSelected = false;
+			mEditAudio.setVisibility(View.VISIBLE);
+			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+					R.drawable.play));
+			mTextAudioStatus.setText("Start playing");
+			mEditAudio.setEnabled(true);
+
+			break;
 		}
 
+	}
+
+	public String getRealPathFromURI(Context context, Uri contentUri) {
+		Cursor cursor = null;
+		try {
+			String[] proj = { MediaStore.Images.Media.DATA };
+			cursor = context.getContentResolver().query(contentUri, proj, null,
+					null, null);
+			int column_index = cursor
+					.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+			cursor.moveToFirst();
+			return cursor.getString(column_index);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
 	}
 
 	private void addPicToGallery(String imagePath) {
@@ -443,11 +523,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private void uploadImage() {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
-		String s[] = mImageFilePath.split("/");
-		String k = s[s.length - 1];
-		String l[] = k.split("\\.");
-		String ext = l[1];
-		mImageFileName = "images/JPEG_" + timeStamp + ext;
+		// get the file extension
+		String ext = Utils.getFileExtension(mImageFilePath);
+		mImageFileName = "images/JPEG_" + timeStamp + "." + ext;
 		Utils.uploadImageToS3(mImageFilePath, mImageFileName, this);
 	}
 
@@ -478,7 +556,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private void uploadAudio() {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
-		mAudioFileName = "audios/3GP_" + timeStamp + "_.3gp";
+		// get the file extension
+		String ext = Utils.getFileExtension(mAudioFilePath);
+		mAudioFileName = "audios/3GP_" + timeStamp + "." + ext;
 		Utils.uploadAudioToS3(mAudioFilePath, mAudioFileName, this);
 
 	}

@@ -183,4 +183,9 @@ public class Utils {
 		myUpload.addProgressListener(myProgressListener);
 	}
 
+	public static String getFileExtension(String str) {
+		String s[] = str.split("/");
+		return s[s.length - 1].split("\\.")[1];
+	}
+
 }
