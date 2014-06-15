@@ -32,7 +32,11 @@
             android:name="com.matrix.patientrx.activity.HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
-         <activity
+        <activity
+            android:name="com.matrix.patientrx.activity.CreateCommentActivity"
+            android:label="@string/title_activity_reply" >
+        </activity>
+        <activity
             android:name="com.matrix.patientrx.activity.HomeScreenActivity"
             android:label="@string/title_activity_home" >
         </activity>

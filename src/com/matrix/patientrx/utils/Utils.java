@@ -55,7 +55,7 @@ public class Utils {
 				asyncHttpResponseHandler);
 	}
 
-	public static void createFirstComment(Context context, int id,
+	public static void createComment(Context context, int id,
 			String message, String imageFileName, String audioFileName,
 			JsonHttpResponseHandler createCommentResponseHandler) {
 		JSONObject jsonParams = new JSONObject();
@@ -102,6 +102,12 @@ public class Utils {
 	public static void getAllCasess(
 			JsonHttpResponseHandler asyncHttpResponseHandler) {
 		RxRestClient.get("cases.json", null, asyncHttpResponseHandler);
+	}
+
+	public static void getAllComments(int id,
+			JsonHttpResponseHandler asyncHttpResponseHandler) {
+		RxRestClient.get("/cases/" + id + "/case_comments.json", null,
+				asyncHttpResponseHandler);
 	}
 
 	public static void setPic(String photoPath, ImageView image) {
