@@ -7,9 +7,15 @@ import android.widget.TextView;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.models.Case;
+import com.matrix.patientrx.models.Comment;
+import com.matrix.patientrx.utils.Utils;
 
 public class ViewCaseDetailActivity extends Activity {
-	private TextView textCaseId;
+	private TextView textCreatedAt;
+	private TextView textName;
+	private TextView textGender;
+	private TextView textAge;
+	private TextView textMessage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -17,10 +23,22 @@ public class ViewCaseDetailActivity extends Activity {
 		setContentView(R.layout.activity_view_case_detail);
 		initializeViews();
 		Case caseItem = getIntent().getParcelableExtra(Constants.EXTRA_CASE);
-		textCaseId.setText(caseItem.getId() + "");
+		textCreatedAt.setText(Utils.getDateInFormat(caseItem.getCreated_at()));
+		textName.setText(caseItem.getName());
+		textGender.setText(caseItem.getGender());
+		textAge.setText(caseItem.getAge() + "");
+		Comment comment = caseItem.getFirst_case_comment();
+		if (comment != null)
+			textMessage.setText(comment.getMessage());
+		else
+			textMessage.setText("");
 	}
 
 	private void initializeViews() {
-		textCaseId = (TextView) findViewById(R.id.textCaseId);
+		textCreatedAt = (TextView) findViewById(R.id.textCreatedAt);
+		textName = (TextView) findViewById(R.id.textName);
+		textGender = (TextView) findViewById(R.id.textGender);
+		textAge = (TextView) findViewById(R.id.textAge);
+		textMessage = (TextView) findViewById(R.id.textMessage);
 	}
 }

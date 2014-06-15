@@ -126,6 +126,7 @@ public class Comment implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeInt(id);
 		dest.writeInt(case_id);
+		dest.writeString(who);
 		dest.writeString(message);
 		dest.writeByte((byte) (is_new ? 1 : 0));
 		dest.writeString(created_at);

@@ -188,4 +188,9 @@ public class Utils {
 		return s[s.length - 1].split("\\.")[1];
 	}
 
+	public static String getDateInFormat(String date) {
+		// TODO change the format
+		return date;
+	}
+
 }
