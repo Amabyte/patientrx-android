@@ -1,5 +1,8 @@
 package com.matrix.patientrx.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 //{
 //    "id": 2,
 //    "case_id": 3,
@@ -11,7 +14,7 @@ package com.matrix.patientrx.models;
 //    "image_url": "https://patientrx-dev.s3-ap-southeast-1.amazonaws.com/images/Untitled.png?AWSAccessKeyId=AKIAJPWHVTXV6URSFHBQ&Expires=1402338208&Signature=rfHfXKBzzY4teCPKxh8QCReBq54%3D",
 //    "audio_url": "https://patientrx-dev.s3-ap-southeast-1.amazonaws.com/audios/?AWSAccessKeyId=AKIAJPWHVTXV6URSFHBQ&Expires=1402338208&Signature=aoQhr%2B9Lg2aifncvXlZANncuG5E%3D"
 //}
-public class Comment {
+public class Comment implements Parcelable {
 	private int id;
 	private int case_id;
 	private String who;
@@ -79,6 +82,8 @@ public class Comment {
 	}
 
 	public String getImage_url() {
+		// return
+		// "https://lh6.googleusercontent.com/-55osAWw3x0Q/URquUtcFr5I/AAAAAAAAAbs/rWlj1RUKrYI/s1024/A%252520Photographer.jpg";
 		return image_url;
 	}
 
@@ -94,4 +99,53 @@ public class Comment {
 		this.audio_url = audio_url;
 	}
 
+	public Comment() {
+
+	}
+
+	public Comment(Parcel in) {
+		readFromParcel(in);
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	private void readFromParcel(Parcel in) {
+		id = in.readInt();
+		case_id = in.readInt();
+		who = in.readString();
+		message = in.readString();
+		is_new = in.readByte() != 0;
+		created_at = in.readString();
+		updated_at = in.readString();
+		image_url = in.readString();
+		audio_url = in.readString();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(id);
+		dest.writeInt(case_id);
+		dest.writeString(who);
+		dest.writeString(message);
+		dest.writeByte((byte) (is_new ? 1 : 0));
+		dest.writeString(created_at);
+		dest.writeString(updated_at);
+		dest.writeString(image_url);
+		dest.writeString(audio_url);
+	}
+
+	public static final Parcelable.Creator<Comment> CREATOR = new Parcelable.Creator<Comment>() {
+
+		public Comment createFromParcel(Parcel in) {
+			return new Comment(in);
+		}
+
+		public Comment[] newArray(int size) {
+			return new Comment[size];
+		}
+
+	};
 }

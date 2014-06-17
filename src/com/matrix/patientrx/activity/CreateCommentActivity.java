@@ -37,27 +37,23 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.listeners.AudioUploadListener;
 import com.matrix.patientrx.listeners.ImageUploadListener;
-import com.matrix.patientrx.models.Case;
 import com.matrix.patientrx.utils.DialogManager;
-import com.matrix.patientrx.utils.Preference;
 import com.matrix.patientrx.utils.Utils;
 
-public class CreateMedicalCaseActivity extends Activity implements
-		OnClickListener, ImageUploadListener, AudioUploadListener {
+public class CreateCommentActivity extends Activity implements OnClickListener,
+		ImageUploadListener, AudioUploadListener {
 	private static final int REQUEST_SELECT_IMAGE_FROM_GALLERY = 0;
 	private static final int REQUEST_SELECT_AUDIO_FROM_GALLERY = 1;
 	private static final int REQUEST_TAKE_PHOTO = 2;
-	private static final String LOG_TAG = "CreateMedicalCaseActivity";
+	private static final String LOG_TAG = "CreateCommentActivity";
 	private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
 
 	private ImageView mImageView;
@@ -65,9 +61,6 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private Button mEditAudio;
 	private Button mEditImageView;
 	private Button mButtonAudio;
-	private Spinner mSpinnerGender;
-	private EditText mEditAge;
-	private EditText mEditName;
 	private EditText mEditDetails;
 
 	private boolean mStartRecording = true;
@@ -81,15 +74,15 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private DialogManager mDialogManager;
 	private String mImageFileName;
 	private String mAudioFileName;
+	private int mCaseId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_create_medical_case);
+		setContentView(R.layout.activity_create_comment);
 		mDialogManager = new DialogManager();
+		mCaseId = getIntent().getIntExtra(Constants.EXTRA_CASE_ID, -1);
 		intializeViews();
-		mEditAge.setText("23");
-		mEditName.setText(Preference.getString(Constants.USER_NAME));
 	}
 
 	private void intializeViews() {
@@ -98,15 +91,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mTextAudioStatus = (TextView) findViewById(R.id.textRecordStatus);
 		mEditAudio = (Button) findViewById(R.id.buttonEditAudio);
 		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
-		mEditAge = (EditText) findViewById(R.id.editAge);
-		mEditName = (EditText) findViewById(R.id.editName);
 		mEditDetails = (EditText) findViewById(R.id.editDetails);
-		mSpinnerGender = (Spinner) findViewById(R.id.spinnerGender);
-		String[] gender = { "Male", "Female" };
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, gender);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		mSpinnerGender.setAdapter(adapter);
 		mImageView.setOnClickListener(this);
 		mEditImageView.setOnClickListener(this);
 		mEditAudio.setOnClickListener(this);
@@ -127,7 +112,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			// }
 			if (mImageSelected) {
 				// zoom ImageView
-				Intent intent = new Intent(CreateMedicalCaseActivity.this,
+				Intent intent = new Intent(CreateCommentActivity.this,
 						ZoomInZoomOut.class);
 				intent.putExtra(Constants.EXTRA_IMAGE_PATH, mImageFilePath);
 				startActivity(intent);
@@ -152,7 +137,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			break;
 		case R.id.buttonEditAudio:
 			showAudioSelectionOptions();
-			// mDialogManager.showAlertDialog(CreateMedicalCaseActivity.this,
+			// mDialogManager.showAlertDialog(CreateCommentActivity.this,
 			// "Alert", "Press OK to erase erase the audio", "OK",
 			// "Cancel", new DialogInterface.OnClickListener() {
 			// @SuppressWarnings("deprecation")
@@ -167,7 +152,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			// }, null);
 			break;
 		case R.id.buttonSubmit:
-			createNewCase();
+			createNewComment();
 		}
 
 	}
@@ -444,6 +429,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		super.onRestoreInstanceState(savedInstanceState);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -451,7 +437,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			return;
 		switch (requestCode) {
 		case REQUEST_SELECT_IMAGE_FROM_GALLERY:
-			setImageFromCameraData(data, CreateMedicalCaseActivity.this);
+			setImageFromCameraData(data, CreateCommentActivity.this);
 			mImageSelected = true;
 			mEditImageView.setVisibility(View.VISIBLE);
 			break;
@@ -466,8 +452,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		case REQUEST_SELECT_AUDIO_FROM_GALLERY:
 			// the selected audio.
 			Uri uri = data.getData();
-			mAudioFilePath = getRealPathFromURI(CreateMedicalCaseActivity.this,
-					uri);
+			mAudioFilePath = getRealPathFromURI(CreateCommentActivity.this, uri);
 			mAudioRecordCompleted = true;
 			noAudioSelected = false;
 			mEditAudio.setVisibility(View.VISIBLE);
@@ -507,16 +492,17 @@ public class CreateMedicalCaseActivity extends Activity implements
 		this.sendBroadcast(mediaScanIntent);
 	}
 
-	private void createNewCase() {
-		mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
+	private void createNewComment() {
+		mDialogManager.showProgressDialog(CreateCommentActivity.this,
 				"Creating case", "Please wait...");
 		if (mImageFilePath != null) {
 			uploadImage();
 		} else if (mAudioRecordCompleted) {
 			uploadAudio();
 		} else {
-			Utils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
-					mCreateCaseResponseHandler);
+			Utils.createComment(CreateCommentActivity.this, mCaseId,
+					mEditDetails.getText().toString(), mImageFileName,
+					mAudioFileName, mCreateCommentResponseHandler);
 		}
 	}
 
@@ -534,16 +520,17 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 		if (status) {
 			if (mAudioRecordCompleted) {
-				mDialogManager.showProgressDialog(
-						CreateMedicalCaseActivity.this, "Uploading Image...");
+				mDialogManager.showProgressDialog(CreateCommentActivity.this,
+						"Uploading Image...");
 				uploadAudio();
 
 			} else {
-				mDialogManager.showProgressDialog(
-						CreateMedicalCaseActivity.this, "Creating Case...");
+				mDialogManager.showProgressDialog(CreateCommentActivity.this,
+						"Creating Case...");
 				// create case
-				Utils.createCase(CreateMedicalCaseActivity.this,
-						getCaseDetails(), mCreateCaseResponseHandler);
+				Utils.createComment(CreateCommentActivity.this, mCaseId,
+						mEditDetails.getText().toString(), mImageFileName,
+						mAudioFileName, mCreateCommentResponseHandler);
 			}
 		} else {
 			// upload failure
@@ -566,50 +553,51 @@ public class CreateMedicalCaseActivity extends Activity implements
 	@Override
 	public void onAudioUploadCompleted(Boolean status) {
 		if (status) {
-			mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
+			mDialogManager.showProgressDialog(CreateCommentActivity.this,
 					"Creating case...");
 			// create case
-			Utils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
-					mCreateCaseResponseHandler);
+			Utils.createComment(CreateCommentActivity.this, mCaseId,
+					mEditDetails.getText().toString(), mImageFileName,
+					mAudioFileName, mCreateCommentResponseHandler);
 		} else {
 			// TODO give retry option
 			mDialogManager.removeProgressDialog();
 		}
 	}
 
-	private JsonHttpResponseHandler mCreateCaseResponseHandler = new JsonHttpResponseHandler() {
-
-		@Override
-		public void onSuccess(int statusCode, Header[] headers,
-				org.json.JSONObject response) {
-			// mDialogManager.removeProgressDialog();
-			Case newCase = new Case();
-			Gson gson = new Gson();
-			newCase = gson.fromJson(response.toString(), newCase.getClass());
-			Utils.createComment(CreateMedicalCaseActivity.this,
-					newCase.getId(), mEditDetails.getText().toString(),
-					mImageFileName, mAudioFileName,
-					mCreateCommentResponseHandler);
-			// Toast.makeText(getApplicationContext(),
-			// "Success:" + new Gson().toJson(response).toString(),
-			// Toast.LENGTH_LONG).show();
-		}
-
-		@Override
-		public void onFailure(int statusCode, org.apache.http.Header[] headers,
-				java.lang.Throwable e, org.json.JSONObject errorResponse) {
-			// Response failed :(
-			String err = "onFailure status code:" + statusCode
-					+ " response body:" + errorResponse + " error:" + e
-					+ " headers:" + headers;
-			Log.d("err", err);
-			mDialogManager.removeProgressDialog();
-			Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG)
-					.show();
-
-		}
-
-	};
+	// private JsonHttpResponseHandler mCreateCaseResponseHandler = new
+	// JsonHttpResponseHandler() {
+	//
+	// @Override
+	// public void onSuccess(int statusCode, Header[] headers,
+	// org.json.JSONObject response) {
+	// // mDialogManager.removeProgressDialog();
+	// Case newCase = new Case();
+	// Gson gson = new Gson();
+	// newCase = gson.fromJson(response.toString(), newCase.getClass());
+	// Utils.createComment(CreateCommentActivity.this, newCase.getId(),
+	// mEditDetails.getText().toString(), mImageFileName,
+	// mAudioFileName, mCreateCommentResponseHandler);
+	// // Toast.makeText(getApplicationContext(),
+	// // "Success:" + new Gson().toJson(response).toString(),
+	// // Toast.LENGTH_LONG).show();
+	// }
+	//
+	// @Override
+	// public void onFailure(int statusCode, org.apache.http.Header[] headers,
+	// java.lang.Throwable e, org.json.JSONObject errorResponse) {
+	// // Response failed :(
+	// String err = "onFailure status code:" + statusCode
+	// + " response body:" + errorResponse + " error:" + e
+	// + " headers:" + headers;
+	// Log.d("err", err);
+	// mDialogManager.removeProgressDialog();
+	// Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG)
+	// .show();
+	//
+	// }
+	//
+	// };
 
 	private JsonHttpResponseHandler mCreateCommentResponseHandler = new JsonHttpResponseHandler() {
 
@@ -621,7 +609,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			// Gson gson = new Gson();
 			// newCase = gson.fromJson(response.toString(), newCase.getClass());
 			// Utils.createFirstComment(newCase.getId(),mEditDetails.getText().toString(),mImageFileName,mAudioFileName);
-			// Toast.makeText(CreateMedicalCaseActivity.this,
+			// Toast.makeText(CreateCommentActivity.this,
 			// "Success:" + new Gson().toJson(response).toString(),
 			// Toast.LENGTH_LONG).show();
 			setResult(RESULT_OK);
@@ -637,20 +625,12 @@ public class CreateMedicalCaseActivity extends Activity implements
 					+ " headers:" + headers;
 			Log.d("err", err);
 			mDialogManager.removeProgressDialog();
-			Toast.makeText(CreateMedicalCaseActivity.this, err,
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(CreateCommentActivity.this, err, Toast.LENGTH_LONG)
+					.show();
 
 		}
 
 	};
-
-	private Case getCaseDetails() {
-		Case newCase = new Case();
-		newCase.setAge(Integer.parseInt(mEditAge.getText().toString()));
-		newCase.setName(mEditName.getText().toString());
-		newCase.setGender((String) mSpinnerGender.getSelectedItem());
-		return newCase;
-	}
 
 	public String compressImage(String filePath) {
 

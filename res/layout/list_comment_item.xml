@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <TextView
+        android:id="@+id/textCreatedAt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:padding="5dp"
+        android:text="TextView"
+        android:textSize="12sp" />
+
+    <RelativeLayout
+        android:id="@+id/patientComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:padding="10dp"
+            android:text="TextView"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textMessage"
+            android:src="@drawable/camera" />
+
+        <ImageView
+            android:id="@+id/imgPlayAudio"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignTop="@+id/img"
+            android:layout_marginTop="35dp"
+            android:layout_toRightOf="@+id/textMessage"
+            android:src="@drawable/play" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/docComment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/textDocName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textDocQualification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="TextView" />
+
+        <ImageView
+            android:id="@+id/imgDocPlayAudio"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textDocName"
+            android:src="@drawable/play" />
+
+        <TextView
+            android:id="@+id/textLabTests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imgDocPlayAudio"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/imgDocPlayAudio"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textDocSuggestions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/imgDocPlayAudio"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textSubRevCase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textDocSuggestions"
+            android:text="TextView" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -8,16 +8,28 @@
     <Button
         android:id="@+id/buttonCreateNewCase"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="5dp"
+        android:layout_weight="1"
         android:text="@string/button_new_case_label" />
 
     <ListView
         android:id="@+id/listViewCase"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:layout_margin="10dp" >
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="8"
+        android:background="@color/white" >
     </ListView>
+
+    <Button
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Logout"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

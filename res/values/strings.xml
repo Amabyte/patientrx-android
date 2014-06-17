@@ -22,5 +22,7 @@
     <string name="text_alert">Alert</string>
     <string name="text_ok">Ok</string>
     <string name="button_new_case_label">+ New Case</string>
+    <string name="title_activity_view_case_detail">View Case Detail</string>
+    <string name="title_activity_reply">Reply</string>
 
 </resources>

@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
+        android:name="com.matrix.patientrx.PatientRxApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -32,13 +33,21 @@
             android:name="com.matrix.patientrx.activity.HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
-         <activity
+        <activity
+            android:name="com.matrix.patientrx.activity.CreateCommentActivity"
+            android:label="@string/title_activity_reply" >
+        </activity>
+        <activity
             android:name="com.matrix.patientrx.activity.HomeScreenActivity"
             android:label="@string/title_activity_home" >
         </activity>
         <activity
             android:name="com.matrix.patientrx.activity.CreateMedicalCaseActivity"
             android:label="@string/title_activity_create_medical_case" >
+        </activity>
+        <activity
+            android:name="com.matrix.patientrx.activity.ViewCaseDetailActivity"
+            android:label="@string/title_activity_view_case_detail" >
         </activity>
         <activity
             android:name="com.matrix.patientrx.activity.GoogleLoginActivity"

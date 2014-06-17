@@ -1,5 +1,8 @@
 package com.matrix.patientrx.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 //{
 //    "id": 10,
 //    "patient_id": 2,
@@ -16,7 +19,7 @@ package com.matrix.patientrx.models;
 //    "total_new_case_comments_by_doctor": 0,
 //    "first_case_comment": null
 //}
-public class Case {
+public class Case implements Parcelable {
 	private int id;
 	private int patient_id;
 	private int docter_id;
@@ -127,5 +130,62 @@ public class Case {
 	public void setAge(int age) {
 		this.age = age;
 	}
+
+	public Case() {
+
+	}
+
+	public Case(Parcel in) {
+		readFromParcel(in);
+	}
+
+	private void readFromParcel(Parcel in) {
+		id = in.readInt();
+		patient_id = in.readInt();
+		docter_id = in.readInt();
+		age = in.readInt();
+		name = in.readString();
+		gender = in.readString();
+		created_at = in.readString();
+		updated_at = in.readString();
+		total_case_comments = in.readInt();
+		total_new_case_comments_by_patient = in.readInt();
+		total_new_case_comments_by_doctor = in.readInt();
+		first_case_comment = (Comment) in.readParcelable(Comment.class
+				.getClassLoader());
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(id);
+		dest.writeInt(patient_id);
+		dest.writeInt(docter_id);
+		dest.writeInt(age);
+		dest.writeString(name);
+		dest.writeString(gender);
+		dest.writeString(created_at);
+		dest.writeString(updated_at);
+		dest.writeInt(total_case_comments);
+		dest.writeInt(total_new_case_comments_by_patient);
+		dest.writeInt(total_new_case_comments_by_doctor);
+		dest.writeParcelable(first_case_comment, flags);
+	}
+
+	public static final Parcelable.Creator<Case> CREATOR = new Parcelable.Creator<Case>() {
+
+		public Case createFromParcel(Parcel in) {
+			return new Case(in);
+		}
+
+		public Case[] newArray(int size) {
+			return new Case[size];
+		}
+
+	};
 
 }
