@@ -27,6 +27,8 @@ import com.matrix.patientrx.models.Case;
 import com.matrix.patientrx.models.Comment;
 import com.matrix.patientrx.utils.DialogManager;
 import com.matrix.patientrx.utils.Utils;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 public class ViewCaseDetailActivity extends Activity implements OnClickListener {
 	private final int REQUEST_CREATE_COMMENT = 0;
@@ -38,6 +40,7 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 	private ListView mListComments;
 	private DialogManager mDialogManager;
 	private int mCaseId;
+	DisplayImageOptions options;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,12 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 		else
 			mTextMessage.setText("");
 		mCaseId = caseItem.getId();
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true).build();
+
 		mDialogManager.showProgressDialog(ViewCaseDetailActivity.this,
 				"Loading...");
 		Utils.getAllComments(mCaseId, mGetAllCommentsResponseHanlder);
@@ -92,7 +101,7 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 			// "Name:" + caseList.get(0).getName(), Toast.LENGTH_LONG)
 			// .show();
 			CommentListAdapter caseListAdapter = new CommentListAdapter(
-					ViewCaseDetailActivity.this, commentList);
+					ViewCaseDetailActivity.this, commentList, options);
 			mListComments.setAdapter(caseListAdapter);
 			mDialogManager.removeProgressDialog();
 		}

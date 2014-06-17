@@ -23,6 +23,7 @@ import com.matrix.patientrx.activity.ZoomInZoomOut;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.models.Comment;
 import com.matrix.patientrx.utils.Utils;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class CommentListAdapter extends BaseAdapter {
@@ -32,11 +33,14 @@ public class CommentListAdapter extends BaseAdapter {
 	private boolean mStartPlaying = true;
 	private MediaPlayer mPlayer = null;
 	private final String LOG_TAG = "CommentListAdapter";
+	private DisplayImageOptions mOptions;
 
-	public CommentListAdapter(Context context, ArrayList<Comment> commentList) {
+	public CommentListAdapter(Context context, ArrayList<Comment> commentList,
+			DisplayImageOptions options) {
 		mContext = context;
 		mCommentList = commentList;
 		mImageLoader = ImageLoader.getInstance();
+		mOptions = options;
 	}
 
 	@Override
@@ -111,18 +115,18 @@ public class CommentListAdapter extends BaseAdapter {
 			holder.patientCommentView.setVisibility(View.VISIBLE);
 			holder.docCommentView.setVisibility(View.GONE);
 			holder.textMessage.setText(comment.getMessage());
+			// TODO confirm this logic with vishal
 			if ((comment.getImage_url() != null)
-					&& (!comment.getImage_url().equals(""))) {
+					&& (comment.getImage_url().contains("images"))) {
 				holder.img.setVisibility(View.VISIBLE);
 				holder.img.setTag(comment.getImage_url());
-				Log.e("Test", "Url:" + comment.getImage_url());
-				mImageLoader.displayImage(comment.getImage_url(), holder.img);
-
+				mImageLoader.displayImage(comment.getImage_url(), holder.img,
+						mOptions);
 			} else {
 				holder.img.setVisibility(View.GONE);
 			}
 			if ((comment.getAudio_url() != null)
-					&& (!comment.getAudio_url().equals(""))) {
+					&& (comment.getAudio_url().contains("audio"))) {
 				holder.imgAudio.setVisibility(View.VISIBLE);
 				holder.imgAudio.setTag(comment.getAudio_url());
 			} else {
