@@ -22,7 +22,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.matrix.patientrx.activity.SplashScreenAcitivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,10 +57,6 @@
         <activity
             android:name="com.matrix.patientrx.activity.ZoomInZoomOut"
             android:label="@string/title_activity_home" >
-        </activity>
-        <activity
-            android:name="com.matrix.patientrx.activity.LoginActivity"
-            android:label="@string/title_activity_login" >
         </activity>
 
         <meta-data
