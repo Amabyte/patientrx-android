@@ -15,7 +15,7 @@ import android.widget.ImageView;
 
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
-import com.matrix.patientrx.utils.Utils;
+import com.matrix.patientrx.http.ServerUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class ZoomInZoomOut extends Activity implements OnTouchListener {
@@ -59,7 +59,7 @@ public class ZoomInZoomOut extends Activity implements OnTouchListener {
 		// TODO Auto-generated method stub
 		super.onWindowFocusChanged(hasFocus);
 		if (mImagePath != null) {
-			Utils.setPic(mImagePath, imageView);
+			ServerUtils.setPic(mImagePath, imageView);
 		} else {
 			ImageLoader.getInstance().displayImage(mImageUrl, imageView);
 		}

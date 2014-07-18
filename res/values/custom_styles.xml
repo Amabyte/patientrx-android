@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="main_list">
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:background">@color/main_bg</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:listSelector">@drawable/patientrx_list_selector_holo_light</item>
+        <item name="android:drawSelectorOnTop">true</item>
+        <item name="android:divider">@color/divider_color</item>
+    </style>
+
+    <style name="title">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">@color/secondary_font_color</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@drawable/title_bg</item>
+    </style>
+
+</resources>

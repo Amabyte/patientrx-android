@@ -1,13 +1,13 @@
 package com.matrix.patientrx.activity;
 
-import com.matrix.patientrx.R;
-import com.matrix.patientrx.constants.Constants;
-import com.matrix.patientrx.utils.Preference;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.matrix.patientrx.R;
+import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.utils.Preference;
 
 public class SplashScreenAcitivity extends Activity {
 	private final int SPLASH_SCREEN_TIME_OUT = 1000;

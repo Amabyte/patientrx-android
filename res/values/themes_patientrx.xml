@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="PatientRx" parent="@style/_PatientRx" />
+
+    <style name="_PatientRx" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_patientrx</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Patientrx</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Patientrx</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Patientrx</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Patientrx</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Patientrx</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_patientrx</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_patientrx</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Patientrx</item>
+
+        <!-- Light.DarkActionBar specific -->
+        <item name="android:actionBarWidgetTheme">@style/Theme.Patientrx.Widget</item>
+        <item name="android:editTextBackground">@drawable/patientrx_edit_text_holo_light</item>
+        <item name="android:textColorHighlight">#99fffc00</item>
+        <item name="android:textSelectHandleLeft">@drawable/patientrx_text_select_handle_left</item>
+        <item name="android:textSelectHandleRight">@drawable/patientrx_text_select_handle_right</item>
+        <item name="android:textSelectHandle">@drawable/patientrx_text_select_handle_middle</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewPatientRx</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/patientrx_btn_check_holo_light</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/patientrx_btn_radio_holo_light</item>
+        <item name="android:buttonStyle">@style/ButtonPatientRx</item>
+        <item name="android:imageButtonStyle">@style/ImageButtonPatientRx</item>
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerPatientRx</item>
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarPatientRx</item>
+        <item name="android:seekBarStyle">@style/SeekBarPatientRx</item>
+        <item name="android:buttonStyleToggle">@style/TogglePatientRx</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/patientrx_list_selector_holo_light</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/patientrx_activated_background_holo_light</item>
+        <item name="android:fastScrollThumbDrawable">@drawable/patientrx_fastscroll_thumb_holo</item>
+    </style>
+
+</resources>

@@ -43,10 +43,10 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.listeners.AudioUploadListener;
 import com.matrix.patientrx.listeners.ImageUploadListener;
 import com.matrix.patientrx.utils.DialogManager;
-import com.matrix.patientrx.utils.Utils;
 
 public class CreateCommentActivity extends Activity implements OnClickListener,
 		ImageUploadListener, AudioUploadListener {
@@ -394,7 +394,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		mImageFilePath = cursor.getString(columnIndex);
 		cursor.close();
 		compressImage(mImageFilePath);
-		Utils.setPic(mImageFilePath, mImageView);
+		ServerUtils.setPic(mImageFilePath, mImageView);
 	}
 
 	@Override
@@ -445,7 +445,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 			compressImage(mImageFilePath);
 			addPicToGallery(mImageFilePath);
 			// Show the full sized image.
-			Utils.setPic(mImageFilePath, mImageView);
+			ServerUtils.setPic(mImageFilePath, mImageView);
 			mImageSelected = true;
 			mEditImageView.setVisibility(View.VISIBLE);
 			break;
@@ -500,7 +500,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		} else if (mAudioRecordCompleted) {
 			uploadAudio();
 		} else {
-			Utils.createComment(CreateCommentActivity.this, mCaseId,
+			ServerUtils.createComment(CreateCommentActivity.this, mCaseId,
 					mEditDetails.getText().toString(), mImageFileName,
 					mAudioFileName, mCreateCommentResponseHandler);
 		}
@@ -510,9 +510,9 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
 		// get the file extension
-		String ext = Utils.getFileExtension(mImageFilePath);
+		String ext = ServerUtils.getFileExtension(mImageFilePath);
 		mImageFileName = "images/JPEG_" + timeStamp + "." + ext;
-		Utils.uploadImageToS3(mImageFilePath, mImageFileName, this);
+		ServerUtils.uploadImageToS3(mImageFilePath, mImageFileName, this);
 	}
 
 	@Override
@@ -528,7 +528,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 				mDialogManager.showProgressDialog(CreateCommentActivity.this,
 						"Creating Case...");
 				// create case
-				Utils.createComment(CreateCommentActivity.this, mCaseId,
+				ServerUtils.createComment(CreateCommentActivity.this, mCaseId,
 						mEditDetails.getText().toString(), mImageFileName,
 						mAudioFileName, mCreateCommentResponseHandler);
 			}
@@ -544,9 +544,9 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
 		// get the file extension
-		String ext = Utils.getFileExtension(mAudioFilePath);
+		String ext = ServerUtils.getFileExtension(mAudioFilePath);
 		mAudioFileName = "audios/3GP_" + timeStamp + "." + ext;
-		Utils.uploadAudioToS3(mAudioFilePath, mAudioFileName, this);
+		ServerUtils.uploadAudioToS3(mAudioFilePath, mAudioFileName, this);
 
 	}
 
@@ -556,7 +556,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 			mDialogManager.showProgressDialog(CreateCommentActivity.this,
 					"Creating case...");
 			// create case
-			Utils.createComment(CreateCommentActivity.this, mCaseId,
+			ServerUtils.createComment(CreateCommentActivity.this, mCaseId,
 					mEditDetails.getText().toString(), mImageFileName,
 					mAudioFileName, mCreateCommentResponseHandler);
 		} else {

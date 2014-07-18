@@ -11,9 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.matrix.patientrx.R;
+import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.models.Case;
 import com.matrix.patientrx.models.Comment;
-import com.matrix.patientrx.utils.Utils;
 
 public class CaseListAdapter extends BaseAdapter {
 	private ArrayList<Case> mCaseList;
@@ -79,7 +79,7 @@ public class CaseListAdapter extends BaseAdapter {
 		else
 			holder.textCaseDescription.setText("");
 		holder.textCaseId.setText("# " + caseItem.getId());
-		holder.textCaseTime.setText(Utils.getDateInFormat(caseItem
+		holder.textCaseTime.setText(ServerUtils.getDateInFormat(caseItem
 				.getUpdated_at()));
 		holder.textPatientName.setText(caseItem.getName());
 		return convertView;

@@ -21,9 +21,9 @@ import com.google.gson.Gson;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
 import com.matrix.patientrx.http.ProgressJsonHttpResponseHandler;
+import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.models.LoginResponse;
 import com.matrix.patientrx.utils.Preference;
-import com.matrix.patientrx.utils.Utils;
 
 public class GoogleLoginActivity extends Activity {
 	private static final String TAG = "GoogleLoginActivity";
@@ -114,7 +114,7 @@ public class GoogleLoginActivity extends Activity {
 			if (token == null)
 				return;
 			progressDialog.dismiss();
-			Utils.loginToPatientRx(Constants.GOOGLE_LOGIN, token,
+			ServerUtils.loginToPatientRx(Constants.GOOGLE_LOGIN, token,
 					new ProgressJsonHttpResponseHandler(
 							GoogleLoginActivity.this) {
 

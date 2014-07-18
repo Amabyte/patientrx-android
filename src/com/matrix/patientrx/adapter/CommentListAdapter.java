@@ -21,8 +21,8 @@ import android.widget.TextView;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.activity.ZoomInZoomOut;
 import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.models.Comment;
-import com.matrix.patientrx.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -140,7 +140,7 @@ public class CommentListAdapter extends BaseAdapter {
 			holder.docCommentView.setVisibility(View.VISIBLE);
 
 		}
-		holder.textCreatedAt.setText(Utils.getDateInFormat(comment
+		holder.textCreatedAt.setText(ServerUtils.getDateInFormat(comment
 				.getCreated_at()));
 		return convertView;
 	}

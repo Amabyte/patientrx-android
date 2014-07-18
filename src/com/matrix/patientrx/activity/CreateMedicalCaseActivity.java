@@ -45,12 +45,12 @@ import com.google.gson.Gson;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.listeners.AudioUploadListener;
 import com.matrix.patientrx.listeners.ImageUploadListener;
 import com.matrix.patientrx.models.Case;
 import com.matrix.patientrx.utils.DialogManager;
 import com.matrix.patientrx.utils.Preference;
-import com.matrix.patientrx.utils.Utils;
 
 public class CreateMedicalCaseActivity extends Activity implements
 		OnClickListener, ImageUploadListener, AudioUploadListener {
@@ -409,7 +409,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		mImageFilePath = cursor.getString(columnIndex);
 		cursor.close();
 		compressImage(mImageFilePath);
-		Utils.setPic(mImageFilePath, mImageView);
+		ServerUtils.setPic(mImageFilePath, mImageView);
 	}
 
 	@Override
@@ -459,7 +459,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			compressImage(mImageFilePath);
 			addPicToGallery(mImageFilePath);
 			// Show the full sized image.
-			Utils.setPic(mImageFilePath, mImageView);
+			ServerUtils.setPic(mImageFilePath, mImageView);
 			mImageSelected = true;
 			mEditImageView.setVisibility(View.VISIBLE);
 			break;
@@ -515,7 +515,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		} else if (mAudioRecordCompleted) {
 			uploadAudio();
 		} else {
-			Utils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
+			ServerUtils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
 					mCreateCaseResponseHandler);
 		}
 	}
@@ -524,9 +524,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
 		// get the file extension
-		String ext = Utils.getFileExtension(mImageFilePath);
+		String ext = ServerUtils.getFileExtension(mImageFilePath);
 		mImageFileName = "images/JPEG_" + timeStamp + "." + ext;
-		Utils.uploadImageToS3(mImageFilePath, mImageFileName, this);
+		ServerUtils.uploadImageToS3(mImageFilePath, mImageFileName, this);
 	}
 
 	@Override
@@ -542,7 +542,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 				mDialogManager.showProgressDialog(
 						CreateMedicalCaseActivity.this, "Creating Case...");
 				// create case
-				Utils.createCase(CreateMedicalCaseActivity.this,
+				ServerUtils.createCase(CreateMedicalCaseActivity.this,
 						getCaseDetails(), mCreateCaseResponseHandler);
 			}
 		} else {
@@ -557,9 +557,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
 		// get the file extension
-		String ext = Utils.getFileExtension(mAudioFilePath);
+		String ext = ServerUtils.getFileExtension(mAudioFilePath);
 		mAudioFileName = "audios/3GP_" + timeStamp + "." + ext;
-		Utils.uploadAudioToS3(mAudioFilePath, mAudioFileName, this);
+		ServerUtils.uploadAudioToS3(mAudioFilePath, mAudioFileName, this);
 
 	}
 
@@ -569,7 +569,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
 					"Creating case...");
 			// create case
-			Utils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
+			ServerUtils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
 					mCreateCaseResponseHandler);
 		} else {
 			// TODO give retry option
@@ -586,7 +586,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			Case newCase = new Case();
 			Gson gson = new Gson();
 			newCase = gson.fromJson(response.toString(), newCase.getClass());
-			Utils.createComment(CreateMedicalCaseActivity.this,
+			ServerUtils.createComment(CreateMedicalCaseActivity.this,
 					newCase.getId(), mEditDetails.getText().toString(),
 					mImageFileName, mAudioFileName,
 					mCreateCommentResponseHandler);

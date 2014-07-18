@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AutoCompleteTextViewPatientRx" parent="android:Widget.Holo.Light.AutoCompleteTextView">
+        <item name="android:dropDownSelector">@drawable/patientrx_list_selector_holo_light</item>
+        <item name="android:background">@drawable/patientrx_edit_text_holo_light</item>
+    </style>
+
+    <style name="ButtonPatientRx" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/patientrx_btn_default_holo_light</item>
+    </style>
+
+    <style name="ImageButtonPatientRx" parent="android:Widget.Holo.Light.ImageButton">
+        <item name="android:background">@drawable/patientrx_btn_default_holo_light</item>
+    </style>
+
+    <style name="SpinnerPatientRx" parent="android:Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/patientrx_spinner_background_holo_light</item>
+        <item name="android:dropDownSelector">@drawable/patientrx_list_selector_holo_light</item>
+    </style>
+
+    <style name="ProgressBarPatientRx" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/patientrx_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/patientrx_progress_indeterminate_horizontal_holo_light</item>
+    </style>
+
+    <style name="SeekBarPatientRx" parent="android:Widget.Holo.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/patientrx_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/patientrx_scrubber_progress_horizontal_holo_light</item>
+        <item name="android:thumb">@drawable/patientrx_scrubber_control_selector_holo_light</item>
+    </style>
+
+    <style name="TogglePatientRx" parent="android:Widget.Holo.Light.Button.Toggle">
+        <item name="android:background">@drawable/patientrx_btn_toggle_holo_light</item>
+    </style>
+
+    <style name="ActionBar.Solid.Patientrx" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/ab_solid_patientrx</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_patientrx</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_patientrx</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Patientrx</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Patientrx" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_patientrx</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Patientrx</item>
+    </style>
+
+    <style name="PopupMenu.Patientrx" parent="@android:style/Widget.Holo.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_patientrx</item>
+    </style>
+
+    <style name="DropDownListView.Patientrx" parent="@android:style/Widget.Holo.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_patientrx</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Patientrx" parent="@android:style/Widget.Holo.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_patientrx</item>
+    </style>
+
+    <style name="DropDownNav.Patientrx" parent="@android:style/Widget.Holo.Spinner">
+        <item name="android:background">@drawable/spinner_background_ab_patientrx</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_patientrx</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_patientrx</item>
+    </style>
+
+    <style name="ProgressBar.Patientrx" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_patientrx</item>
+    </style>
+
+    <style name="ActionButton.CloseMode.Patientrx" parent="@android:style/Widget.Holo.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_patientrx</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Patientrx.Widget" parent="@android:style/Theme.Holo">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Patientrx</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Patientrx</item>
+    </style>
+
+</resources>

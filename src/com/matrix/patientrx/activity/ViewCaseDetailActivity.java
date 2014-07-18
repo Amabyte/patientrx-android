@@ -23,10 +23,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.adapter.CommentListAdapter;
 import com.matrix.patientrx.constants.Constants;
+import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.models.Case;
 import com.matrix.patientrx.models.Comment;
 import com.matrix.patientrx.utils.DialogManager;
-import com.matrix.patientrx.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 public class ViewCaseDetailActivity extends Activity implements OnClickListener {
@@ -48,7 +48,7 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 		initializeViews();
 		mDialogManager = new DialogManager();
 		Case caseItem = getIntent().getParcelableExtra(Constants.EXTRA_CASE);
-		mTextCreatedAt.setText(Utils.getDateInFormat(caseItem.getCreated_at()));
+		mTextCreatedAt.setText(ServerUtils.getDateInFormat(caseItem.getCreated_at()));
 		mTextName.setText(caseItem.getName());
 		mTextGender.setText(caseItem.getGender());
 		mTextAge.setText(caseItem.getAge() + "");
@@ -66,7 +66,7 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 
 		mDialogManager.showProgressDialog(ViewCaseDetailActivity.this,
 				"Loading...");
-		Utils.getAllComments(mCaseId, mGetAllCommentsResponseHanlder);
+		ServerUtils.getAllComments(mCaseId, mGetAllCommentsResponseHanlder);
 	}
 
 	private void initializeViews() {
@@ -140,7 +140,7 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 		case REQUEST_CREATE_COMMENT:
 			mDialogManager.showProgressDialog(ViewCaseDetailActivity.this,
 					"Loading...");
-			Utils.getAllComments(mCaseId, mGetAllCommentsResponseHanlder);
+			ServerUtils.getAllComments(mCaseId, mGetAllCommentsResponseHanlder);
 			break;
 		}
 	};

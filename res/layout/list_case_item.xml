@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="5dp" >
+    android:padding="@dimen/double_common_padding" >
 
     <ImageView
         android:id="@+id/imgDocReply"
@@ -25,8 +24,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:singleLine="true"
         android:layout_toLeftOf="@id/imgDocReply"
+        android:singleLine="true"
         android:text="Fever"
         android:textSize="20sp" />
 

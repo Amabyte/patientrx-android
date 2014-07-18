@@ -3,6 +3,8 @@
 
     <string name="app_name">PatientRx</string>
     <string name="patient_rx">Patient Rx</string>
+    <!-- Menu -->
+    <string name="logout">Logout</string>
 
     <!-- Home Activity -->
     <string name="title_activity_home">HomeActivity</string>
