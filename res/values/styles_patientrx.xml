@@ -10,10 +10,12 @@
 
     <style name="ButtonPatientRx" parent="android:Widget.Holo.Light.Button">
         <item name="android:background">@drawable/patientrx_btn_default_holo_light</item>
+        <item name="android:textColor">@color/main_color</item>
     </style>
 
     <style name="ImageButtonPatientRx" parent="android:Widget.Holo.Light.ImageButton">
         <item name="android:background">@drawable/patientrx_btn_default_holo_light</item>
+        <item name="android:textColor">@color/main_color</item>
     </style>
 
     <style name="SpinnerPatientRx" parent="android:Widget.Holo.Light.Spinner">

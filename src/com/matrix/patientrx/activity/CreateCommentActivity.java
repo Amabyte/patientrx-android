@@ -91,7 +91,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		mTextAudioStatus = (TextView) findViewById(R.id.textRecordStatus);
 		mEditAudio = (Button) findViewById(R.id.buttonEditAudio);
 		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
-		mEditDetails = (EditText) findViewById(R.id.editDetails);
+		mEditDetails = (EditText) findViewById(R.id.etDetails);
 		mImageView.setOnClickListener(this);
 		mEditImageView.setOnClickListener(this);
 		mEditAudio.setOnClickListener(this);
@@ -197,7 +197,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 				@Override
 				public void onCompletion(MediaPlayer mp) {
 					mButtonAudio.setBackgroundDrawable(getResources()
-							.getDrawable(R.drawable.play));
+							.getDrawable(R.drawable.ic_action_play));
 					mTextAudioStatus.setText("Start playing");
 					mEditAudio.setEnabled(true);
 				}
@@ -205,7 +205,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 			mPlayer.prepare();
 			mPlayer.start();
 			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.stop));
+					R.drawable.ic_action_stop));
 			mEditAudio.setEnabled(false);
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "prepare() failed");
@@ -216,7 +216,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 	private void stopPlaying() {
 		mPlayer.release();
 		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.play));
+				R.drawable.ic_action_play));
 		mEditAudio.setEnabled(true);
 		mPlayer = null;
 	}
@@ -250,7 +250,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 
 		mRecorder.start();
 		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.stop));
+				R.drawable.ic_action_stop));
 		mEditAudio.setEnabled(false);
 	}
 
@@ -265,7 +265,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		mAudioRecordCompleted = true;
 		mEditAudio.setVisibility(View.VISIBLE);
 		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.play));
+				R.drawable.ic_action_play));
 		mTextAudioStatus.setText("Start playing");
 		mEditAudio.setEnabled(true);
 	}
@@ -457,7 +457,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 			noAudioSelected = false;
 			mEditAudio.setVisibility(View.VISIBLE);
 			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.play));
+					R.drawable.ic_action_play));
 			mTextAudioStatus.setText("Start playing");
 			mEditAudio.setEnabled(true);
 

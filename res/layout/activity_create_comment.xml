@@ -6,7 +6,7 @@
     tools:context="${packageName}.${activityClass}" >
 
     <EditText
-        android:id="@+id/editDetails"
+        android:id="@+id/etDetails"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:gravity="top"
@@ -16,7 +16,7 @@
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editDetails"
+        android:layout_below="@id/etDetails"
         android:orientation="horizontal"
         android:weightSum="2" >
 
@@ -33,7 +33,7 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:contentDescription="@string/image"
-                android:src="@drawable/camera" />
+                android:src="@drawable/ic_action_camera" />
 
             <Button
                 android:id="@+id/buttonEditImage"
@@ -61,7 +61,7 @@
                 android:id="@+id/buttonRecordAudio"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:background="@drawable/record" />
+                android:background="@drawable/ic_action_camera" />
 
             <Button
                 android:id="@+id/buttonEditAudio"

@@ -34,7 +34,7 @@
             android:layout_height="150dp"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textMessage"
-            android:src="@drawable/camera" />
+            android:src="@drawable/ic_action_camera" />
 
         <ImageView
             android:id="@+id/imgPlayAudio"
@@ -43,7 +43,7 @@
             android:layout_alignTop="@+id/img"
             android:layout_marginTop="35dp"
             android:layout_toRightOf="@+id/textMessage"
-            android:src="@drawable/play" />
+            android:src="@drawable/ic_action_play" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -73,7 +73,7 @@
             android:layout_height="75dp"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textDocName"
-            android:src="@drawable/play" />
+            android:src="@drawable/ic_action_play" />
 
         <TextView
             android:id="@+id/textLabTests"

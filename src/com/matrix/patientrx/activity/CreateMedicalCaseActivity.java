@@ -31,8 +31,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,10 +64,9 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
 
 	private ImageView mImageView;
-	private TextView mTextAudioStatus;
 	private Button mEditAudio;
 	private Button mEditImageView;
-	private Button mButtonAudio;
+	private ImageView mImageViewAudio;
 	private Spinner mSpinnerGender;
 	private EditText mEditAge;
 	private EditText mEditName;
@@ -86,31 +88,43 @@ public class CreateMedicalCaseActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_medical_case);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mDialogManager = new DialogManager();
 		intializeViews();
-		mEditAge.setText("23");
 		mEditName.setText(Preference.getString(Constants.USER_NAME));
 	}
 
 	private void intializeViews() {
 		mImageView = (ImageView) findViewById(R.id.img);
 		mEditImageView = (Button) findViewById(R.id.buttonEditImage);
-		mTextAudioStatus = (TextView) findViewById(R.id.textRecordStatus);
 		mEditAudio = (Button) findViewById(R.id.buttonEditAudio);
-		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
-		mEditAge = (EditText) findViewById(R.id.editAge);
-		mEditName = (EditText) findViewById(R.id.editName);
-		mEditDetails = (EditText) findViewById(R.id.editDetails);
+		mImageViewAudio = (ImageView) findViewById(R.id.buttonRecordAudio);
+		mEditAge = (EditText) findViewById(R.id.etAge);
+		mEditName = (EditText) findViewById(R.id.etName);
+		mEditDetails = (EditText) findViewById(R.id.etDetails);
 		mSpinnerGender = (Spinner) findViewById(R.id.spinnerGender);
 		String[] gender = { "Male", "Female" };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, gender);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		mSpinnerGender.setAdapter(adapter);
+		mSpinnerGender.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				((TextView) parent.getChildAt(0)).setTextColor(getResources()
+						.getColor(R.color.white));
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
 		mImageView.setOnClickListener(this);
 		mEditImageView.setOnClickListener(this);
 		mEditAudio.setOnClickListener(this);
-		mButtonAudio.setOnClickListener(this);
+		mImageViewAudio.setOnClickListener(this);
 		findViewById(R.id.buttonSubmit).setOnClickListener(this);
 	}
 
@@ -175,21 +189,11 @@ public class CreateMedicalCaseActivity extends Activity implements
 	private void startStopPlaying() {
 		// play recorded file
 		onPlay(mStartPlaying);
-		if (mStartPlaying) {
-			mTextAudioStatus.setText("Stop playing");
-		} else {
-			mTextAudioStatus.setText("Start playing");
-		}
 		mStartPlaying = !mStartPlaying;
 	}
 
 	private void recordStopAudio() {
 		noAudioSelected = false;
-		if (mStartRecording) {
-			mTextAudioStatus.setText("Stop recording");
-		} else {
-			mTextAudioStatus.setText("Start recording");
-		}
 		onRecord(mStartRecording);
 		mStartRecording = !mStartRecording;
 	}
@@ -202,7 +206,6 @@ public class CreateMedicalCaseActivity extends Activity implements
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void startPlaying() {
 		mPlayer = new MediaPlayer();
 		try {
@@ -211,27 +214,22 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 				@Override
 				public void onCompletion(MediaPlayer mp) {
-					mButtonAudio.setBackgroundDrawable(getResources()
-							.getDrawable(R.drawable.play));
-					mTextAudioStatus.setText("Start playing");
+					mImageViewAudio.setImageResource(R.drawable.ic_action_play);
 					mEditAudio.setEnabled(true);
 				}
 			});
 			mPlayer.prepare();
 			mPlayer.start();
-			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.stop));
+			mImageViewAudio.setImageResource(R.drawable.ic_action_stop);
 			mEditAudio.setEnabled(false);
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "prepare() failed");
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void stopPlaying() {
 		mPlayer.release();
-		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.play));
+		mImageViewAudio.setImageResource(R.drawable.ic_action_play);
 		mEditAudio.setEnabled(true);
 		mPlayer = null;
 	}
@@ -244,7 +242,6 @@ public class CreateMedicalCaseActivity extends Activity implements
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void startRecording() {
 		mAudioFilePath = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
@@ -264,14 +261,12 @@ public class CreateMedicalCaseActivity extends Activity implements
 		}
 
 		mRecorder.start();
-		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.stop));
+		mImageViewAudio.setImageResource(R.drawable.ic_action_stop);
 		mEditAudio.setEnabled(false);
 	}
 
 	private Boolean mAudioRecordCompleted = false;
 
-	@SuppressWarnings("deprecation")
 	private void stopRecording() {
 		mRecorder.stop();
 		mRecorder.release();
@@ -279,9 +274,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 		// TODO enable play the recorded audio
 		mAudioRecordCompleted = true;
 		mEditAudio.setVisibility(View.VISIBLE);
-		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.play));
-		mTextAudioStatus.setText("Start playing");
+		mImageViewAudio.setImageResource(R.drawable.ic_action_play);
 		mEditAudio.setEnabled(true);
 	}
 
@@ -471,11 +464,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 			mAudioRecordCompleted = true;
 			noAudioSelected = false;
 			mEditAudio.setVisibility(View.VISIBLE);
-			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.play));
-			mTextAudioStatus.setText("Start playing");
+			mImageViewAudio.setImageResource(R.drawable.ic_action_play);
 			mEditAudio.setEnabled(true);
-
 			break;
 		}
 
@@ -507,7 +497,31 @@ public class CreateMedicalCaseActivity extends Activity implements
 		this.sendBroadcast(mediaScanIntent);
 	}
 
+	private boolean isEmpty(TextView textView) {
+		return getValueTextView(textView).isEmpty();
+
+	}
+
+	private String getValueTextView(TextView textView) {
+		return textView.getText().toString().trim();
+	}
+
 	private void createNewCase() {
+		if (isEmpty(mEditName)) {
+			mEditName.setError("Required");
+			mEditName.requestFocus();
+			return;
+		}
+		if (isEmpty(mEditAge)) {
+			mEditAge.setError("Required");
+			mEditAge.requestFocus();
+			return;
+		}
+		if (isEmpty(mEditDetails)) {
+			mEditDetails.setError("Required");
+			mEditDetails.requestFocus();
+			return;
+		}
 		mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
 				"Creating case", "Please wait...");
 		if (mImageFilePath != null) {
@@ -515,8 +529,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 		} else if (mAudioRecordCompleted) {
 			uploadAudio();
 		} else {
-			ServerUtils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
-					mCreateCaseResponseHandler);
+			ServerUtils.createCase(CreateMedicalCaseActivity.this,
+					getCaseDetails(), mCreateCaseResponseHandler);
 		}
 	}
 
@@ -569,8 +583,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 			mDialogManager.showProgressDialog(CreateMedicalCaseActivity.this,
 					"Creating case...");
 			// create case
-			ServerUtils.createCase(CreateMedicalCaseActivity.this, getCaseDetails(),
-					mCreateCaseResponseHandler);
+			ServerUtils.createCase(CreateMedicalCaseActivity.this,
+					getCaseDetails(), mCreateCaseResponseHandler);
 		} else {
 			// TODO give retry option
 			mDialogManager.removeProgressDialog();
@@ -799,4 +813,15 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 		return inSampleSize;
 	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 }

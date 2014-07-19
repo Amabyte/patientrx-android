@@ -150,10 +150,10 @@ public class CommentListAdapter extends BaseAdapter {
 		onPlay(img, mStartPlaying);
 		if (mStartPlaying) {
 			img.setImageDrawable(mContext.getResources().getDrawable(
-					R.drawable.stop));
+					R.drawable.ic_action_stop));
 		} else {
 			img.setImageDrawable(mContext.getResources().getDrawable(
-					R.drawable.play));
+					R.drawable.ic_action_play));
 		}
 		mStartPlaying = !mStartPlaying;
 	}

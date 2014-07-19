@@ -11,10 +11,10 @@
     <string name="create_medical_case">Create Medical Case</string>
     <string name="reply_from_doctor">Reply From Doctor</string>
     <string name="previously_submitted_cases">Previously Submitted cases</string>
-    <string name="title_activity_create_medical_case">CreateMedicalCaseActivity</string>
+    <string name="title_activity_create_medical_case">New medical case</string>
 
     <!-- Create Medical case -->
-    <string name="enter_name_hint">Enter name</string>
+    <string name="name">Name</string>
     <string name="image">image</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="hello_world">Hello world!</string>
@@ -26,5 +26,7 @@
     <string name="button_new_case_label">+ New Case</string>
     <string name="title_activity_view_case_detail">View Case Detail</string>
     <string name="title_activity_reply">Reply</string>
+    <string name="age">Age</string>
+    <string name="details">Details</string>
 
 </resources>
