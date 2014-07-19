@@ -601,7 +601,7 @@ public class CreateMedicalCaseActivity extends Activity implements
 			Gson gson = new Gson();
 			newCase = gson.fromJson(response.toString(), newCase.getClass());
 			ServerUtils.createComment(CreateMedicalCaseActivity.this,
-					newCase.getId(), mEditDetails.getText().toString(),
+					newCase.getId(), getValueTextView(mEditDetails),
 					mImageFileName, mAudioFileName,
 					mCreateCommentResponseHandler);
 			// Toast.makeText(getApplicationContext(),
@@ -660,8 +660,8 @@ public class CreateMedicalCaseActivity extends Activity implements
 
 	private Case getCaseDetails() {
 		Case newCase = new Case();
-		newCase.setAge(Integer.parseInt(mEditAge.getText().toString()));
-		newCase.setName(mEditName.getText().toString());
+		newCase.setAge(Integer.parseInt(getValueTextView(mEditAge)));
+		newCase.setName(getValueTextView(mEditName));
 		newCase.setGender((String) mSpinnerGender.getSelectedItem());
 		return newCase;
 	}

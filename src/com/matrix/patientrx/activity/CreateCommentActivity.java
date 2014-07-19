@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -57,10 +58,9 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 	private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
 
 	private ImageView mImageView;
-	private TextView mTextAudioStatus;
 	private Button mEditAudio;
 	private Button mEditImageView;
-	private Button mButtonAudio;
+	private ImageView mImageViewAudio;
 	private EditText mEditDetails;
 
 	private boolean mStartRecording = true;
@@ -80,6 +80,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_comment);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mDialogManager = new DialogManager();
 		mCaseId = getIntent().getIntExtra(Constants.EXTRA_CASE_ID, -1);
 		intializeViews();
@@ -88,14 +89,13 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 	private void intializeViews() {
 		mImageView = (ImageView) findViewById(R.id.img);
 		mEditImageView = (Button) findViewById(R.id.buttonEditImage);
-		mTextAudioStatus = (TextView) findViewById(R.id.textRecordStatus);
 		mEditAudio = (Button) findViewById(R.id.buttonEditAudio);
-		mButtonAudio = (Button) findViewById(R.id.buttonRecordAudio);
+		mImageViewAudio = (ImageView) findViewById(R.id.buttonRecordAudio);
 		mEditDetails = (EditText) findViewById(R.id.etDetails);
 		mImageView.setOnClickListener(this);
 		mEditImageView.setOnClickListener(this);
 		mEditAudio.setOnClickListener(this);
-		mButtonAudio.setOnClickListener(this);
+		mImageViewAudio.setOnClickListener(this);
 		findViewById(R.id.buttonSubmit).setOnClickListener(this);
 	}
 
@@ -160,21 +160,11 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 	private void startStopPlaying() {
 		// play recorded file
 		onPlay(mStartPlaying);
-		if (mStartPlaying) {
-			mTextAudioStatus.setText("Stop playing");
-		} else {
-			mTextAudioStatus.setText("Start playing");
-		}
 		mStartPlaying = !mStartPlaying;
 	}
 
 	private void recordStopAudio() {
 		noAudioSelected = false;
-		if (mStartRecording) {
-			mTextAudioStatus.setText("Stop recording");
-		} else {
-			mTextAudioStatus.setText("Start recording");
-		}
 		onRecord(mStartRecording);
 		mStartRecording = !mStartRecording;
 	}
@@ -196,15 +186,14 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 
 				@Override
 				public void onCompletion(MediaPlayer mp) {
-					mButtonAudio.setBackgroundDrawable(getResources()
+					mImageViewAudio.setBackgroundDrawable(getResources()
 							.getDrawable(R.drawable.ic_action_play));
-					mTextAudioStatus.setText("Start playing");
 					mEditAudio.setEnabled(true);
 				}
 			});
 			mPlayer.prepare();
 			mPlayer.start();
-			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+			mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
 					R.drawable.ic_action_stop));
 			mEditAudio.setEnabled(false);
 		} catch (IOException e) {
@@ -215,7 +204,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 	@SuppressWarnings("deprecation")
 	private void stopPlaying() {
 		mPlayer.release();
-		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+		mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
 				R.drawable.ic_action_play));
 		mEditAudio.setEnabled(true);
 		mPlayer = null;
@@ -249,7 +238,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		}
 
 		mRecorder.start();
-		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+		mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
 				R.drawable.ic_action_stop));
 		mEditAudio.setEnabled(false);
 	}
@@ -264,9 +253,8 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		// TODO enable play the recorded audio
 		mAudioRecordCompleted = true;
 		mEditAudio.setVisibility(View.VISIBLE);
-		mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+		mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
 				R.drawable.ic_action_play));
-		mTextAudioStatus.setText("Start playing");
 		mEditAudio.setEnabled(true);
 	}
 
@@ -456,9 +444,8 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 			mAudioRecordCompleted = true;
 			noAudioSelected = false;
 			mEditAudio.setVisibility(View.VISIBLE);
-			mButtonAudio.setBackgroundDrawable(getResources().getDrawable(
+			mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
 					R.drawable.ic_action_play));
-			mTextAudioStatus.setText("Start playing");
 			mEditAudio.setEnabled(true);
 
 			break;
@@ -492,16 +479,31 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		this.sendBroadcast(mediaScanIntent);
 	}
 
+	private boolean isEmpty(TextView textView) {
+		return getValueTextView(textView).isEmpty();
+
+	}
+
+	private String getValueTextView(TextView textView) {
+		return textView.getText().toString().trim();
+	}
+
 	private void createNewComment() {
 		mDialogManager.showProgressDialog(CreateCommentActivity.this,
 				"Creating case", "Please wait...");
+		if (!(mImageFilePath != null || mAudioRecordCompleted || isEmpty(mEditDetails))) {
+			Toast.makeText(getApplicationContext(),
+					"Please provide atleat one detail", Toast.LENGTH_LONG)
+					.show();
+			return;
+		}
 		if (mImageFilePath != null) {
 			uploadImage();
 		} else if (mAudioRecordCompleted) {
 			uploadAudio();
 		} else {
 			ServerUtils.createComment(CreateCommentActivity.this, mCaseId,
-					mEditDetails.getText().toString(), mImageFileName,
+					getValueTextView(mEditDetails), mImageFileName,
 					mAudioFileName, mCreateCommentResponseHandler);
 		}
 	}
@@ -529,7 +531,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 						"Creating Case...");
 				// create case
 				ServerUtils.createComment(CreateCommentActivity.this, mCaseId,
-						mEditDetails.getText().toString(), mImageFileName,
+						getValueTextView(mEditDetails), mImageFileName,
 						mAudioFileName, mCreateCommentResponseHandler);
 			}
 		} else {
@@ -557,7 +559,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 					"Creating case...");
 			// create case
 			ServerUtils.createComment(CreateCommentActivity.this, mCaseId,
-					mEditDetails.getText().toString(), mImageFileName,
+					getValueTextView(mEditDetails), mImageFileName,
 					mAudioFileName, mCreateCommentResponseHandler);
 		} else {
 			// TODO give retry option
@@ -778,5 +780,15 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		}
 
 		return inSampleSize;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

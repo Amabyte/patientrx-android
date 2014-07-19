@@ -1,73 +1,89 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
+    android:background="@color/main_bg"
+    android:orientation="vertical"
     tools:context="${packageName}.${activityClass}" >
 
-    <EditText
-        android:id="@+id/etDetails"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:gravity="top"
-        android:hint="Enter Details here" />
-
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/etDetails"
-        android:orientation="horizontal"
-        android:weightSum="2" >
+        android:background="@color/main_color"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_horizontal_margin" >
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <EditText
+            android:id="@+id/etDetails"
+            style="@style/edit_text_with_main_color"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/details"
+            android:lines="4" >
+
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/title_bg"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:padding="@dimen/double_common_padding" >
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/common_padding"
             android:layout_weight="1"
-            android:background="#66ffff"
-            android:gravity="center"
+            android:background="@drawable/card"
             android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/buttonEditImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="@string/edit"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/img"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
+                android:layout_above="@id/buttonEditImage"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
                 android:contentDescription="@string/image"
-                android:src="@drawable/ic_action_camera" />
-
-            <Button
-                android:id="@+id/buttonEditImage"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:text="Edit"
-                android:visibility="gone" />
-        </LinearLayout>
+                android:scaleType="centerCrop"
+                android:src="@drawable/camera" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/common_padding"
             android:layout_weight="1"
+            android:background="@drawable/card"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="5dp" >
+            android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/textRecordStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Record Audio" />
-
-            <Button
+            <ImageView
                 android:id="@+id/buttonRecordAudio"
                 android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:background="@drawable/ic_action_camera" />
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_action_mic" />
 
             <Button
                 android:id="@+id/buttonEditAudio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Edit"
+                android:text="@string/edit"
                 android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
@@ -76,8 +92,6 @@
         android:id="@+id/buttonSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_marginTop="18dp"
-        android:text="Add Reply" />
+        android:text="@string/title_activity_reply" />
 
-</RelativeLayout>
+</LinearLayout>
