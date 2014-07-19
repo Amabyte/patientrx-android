@@ -18,4 +18,42 @@
         <item name="android:background">@drawable/title_bg</item>
     </style>
 
+    <style name="id_tag">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColor">@color/patientrx_color</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@color/main_color</item>
+        <item name="android:paddingLeft">@dimen/double_common_padding</item>
+        <item name="android:paddingRight">@dimen/common_padding</item>
+    </style>
+
+    <style name="notification_count">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">@color/main_color</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@color/patientrx_color</item>
+        <item name="android:paddingLeft">@dimen/common_padding</item>
+        <item name="android:paddingRight">@dimen/common_padding</item>
+    </style>
+
+    <style name="list_item_title">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
+        <item name="android:textColor">@color/primary_font_color</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="list_item_sub_title">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
+        <item name="android:textColor">@color/primary_font_color</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="list_time">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColor">@color/secondary_font_color</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
 </resources>

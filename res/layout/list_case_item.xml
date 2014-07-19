@@ -2,60 +2,50 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/double_common_padding" >
-
-    <ImageView
-        android:id="@+id/imgDocReply"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/doc_reply" />
+    android:paddingTop="@dimen/common_padding" >
 
     <TextView
-        android:id="@+id/textDocReply"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:gravity="center"
-        android:text="3" />
+        android:id="@+id/tvId"
+        style="@style/id_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/textCaseDescription"
+        android:id="@+id/tvUnreadNotification"
+        style="@style/notification_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@id/imgDocReply"
-        android:singleLine="true"
-        android:text="Fever"
-        android:textSize="20sp" />
+        android:layout_alignParentRight="true" />
 
-    <TextView
-        android:id="@+id/textCaseId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/textCaseDescription"
-        android:padding="5dp"
-        android:text="#234"
-        android:textSize="14sp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvId"
+        android:paddingBottom="@dimen/double_common_padding"
+        android:paddingLeft="@dimen/double_common_padding"
+        android:paddingRight="@dimen/double_common_padding"
+        android:paddingTop="@dimen/common_padding" >
 
-    <TextView
-        android:id="@+id/textPatientName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textCaseDescription"
-        android:layout_toRightOf="@id/textCaseId"
-        android:padding="5dp"
-        android:text="Vishal Vijay"
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tvMessage"
+            style="@style/list_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/textCaseTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/imgDocReply"
-        android:text="5th June 14 v11:21 AM"
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tvName"
+            style="@style/list_item_sub_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvMessage" />
+
+        <TextView
+            android:id="@+id/tvCreatedAt"
+            style="@style/list_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/tvName" />
+    </RelativeLayout>
 
 </RelativeLayout>

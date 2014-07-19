@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.matrix.patientrx.R;
@@ -46,18 +45,15 @@ public class CaseListAdapter extends BaseAdapter {
 			convertView = LayoutInflater.from(mContext).inflate(
 					R.layout.list_case_item, null);
 			holder = new ViewHolder();
-			holder.imgDocReply = (ImageView) convertView
-					.findViewById(R.id.imgDocReply);
-			holder.textCaseDescription = (TextView) convertView
-					.findViewById(R.id.textCaseDescription);
-			holder.textCaseId = (TextView) convertView
-					.findViewById(R.id.textCaseId);
-			holder.textCaseTime = (TextView) convertView
-					.findViewById(R.id.textCaseTime);
-			holder.textDocReply = (TextView) convertView
-					.findViewById(R.id.textDocReply);
-			holder.textPatientName = (TextView) convertView
-					.findViewById(R.id.textPatientName);
+			holder.messageTextView = (TextView) convertView
+					.findViewById(R.id.tvMessage);
+			holder.idTextView = (TextView) convertView.findViewById(R.id.tvId);
+			holder.createdAtTextView = (TextView) convertView
+					.findViewById(R.id.tvCreatedAt);
+			holder.nameTextView = (TextView) convertView
+					.findViewById(R.id.tvName);
+			holder.unReadedNotitficationTextView = (TextView) convertView
+					.findViewById(R.id.tvUnreadNotification);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -65,33 +61,27 @@ public class CaseListAdapter extends BaseAdapter {
 
 		Case caseItem = mCaseList.get(position);
 		if (caseItem.getTotal_new_case_comments_by_doctor() > 0) {
-			holder.textDocReply.setText(caseItem
-					.getTotal_new_case_comments_by_doctor());
-			holder.imgDocReply.setVisibility(View.VISIBLE);
-			holder.textDocReply.setVisibility(View.VISIBLE);
+			holder.unReadedNotitficationTextView.setText(caseItem
+					.getTotal_new_case_comments_by_doctor() + "");
+			holder.unReadedNotitficationTextView.setVisibility(View.VISIBLE);
 		} else {
-			holder.imgDocReply.setVisibility(View.INVISIBLE);
-			holder.textDocReply.setVisibility(View.INVISIBLE);
+			holder.unReadedNotitficationTextView.setVisibility(View.GONE);
 		}
 		Comment comment = caseItem.getFirst_case_comment();
 		if (comment != null)
-			holder.textCaseDescription.setText(comment.getMessage());
+			holder.messageTextView.setText(comment.getMessage());
 		else
-			holder.textCaseDescription.setText("");
-		holder.textCaseId.setText("# " + caseItem.getId());
-		holder.textCaseTime.setText(ServerUtils.getDateInFormat(caseItem
+			holder.messageTextView.setText("");
+		holder.idTextView.setText("# " + caseItem.getId());
+		holder.createdAtTextView.setText(ServerUtils.getDateInFormat(caseItem
 				.getUpdated_at()));
-		holder.textPatientName.setText(caseItem.getName());
+		holder.nameTextView.setText(caseItem.getName());
 		return convertView;
 	}
 
 	private class ViewHolder {
-		private ImageView imgDocReply;
-		private TextView textDocReply;
-		private TextView textCaseDescription;
-		private TextView textCaseId;
-		private TextView textPatientName;
-		private TextView textCaseTime;
+		private TextView idTextView, unReadedNotitficationTextView,
+				messageTextView, nameTextView, createdAtTextView;
 	}
 
 }
