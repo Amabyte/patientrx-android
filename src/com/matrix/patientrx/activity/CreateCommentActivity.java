@@ -489,14 +489,14 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 	}
 
 	private void createNewComment() {
-		mDialogManager.showProgressDialog(CreateCommentActivity.this,
-				"Creating case", "Please wait...");
-		if (!(mImageFilePath != null || mAudioRecordCompleted || isEmpty(mEditDetails))) {
+		if (!(mImageFilePath != null || mAudioRecordCompleted || !isEmpty(mEditDetails))) {
 			Toast.makeText(getApplicationContext(),
-					"Please provide atleat one detail", Toast.LENGTH_LONG)
+					"Please provide atleat one detail", Toast.LENGTH_SHORT)
 					.show();
 			return;
 		}
+		mDialogManager.showProgressDialog(CreateCommentActivity.this,
+				"Creating case", "Please wait...");
 		if (mImageFilePath != null) {
 			uploadImage();
 		} else if (mAudioRecordCompleted) {
