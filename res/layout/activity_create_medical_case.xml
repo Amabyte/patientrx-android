@@ -15,7 +15,7 @@
 
         <EditText
             android:id="@+id/etName"
-            style="@style/edit_text_name"
+            style="@style/text_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/name" >
@@ -36,7 +36,7 @@
 
             <EditText
                 android:id="@+id/etAge"
-                style="@style/edit_text_with_main_color"
+                style="@style/text_with_main_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/age"
@@ -46,7 +46,7 @@
 
         <EditText
             android:id="@+id/etDetails"
-            style="@style/edit_text_with_main_color"
+            style="@style/text_with_main_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/details"
@@ -105,6 +105,7 @@
                 android:layout_width="75dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:contentDescription="@string/audio"
                 android:src="@drawable/ic_action_mic" />
 
             <Button

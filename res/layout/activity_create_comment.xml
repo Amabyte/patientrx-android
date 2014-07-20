@@ -15,7 +15,7 @@
 
         <EditText
             android:id="@+id/etDetails"
-            style="@style/edit_text_with_main_color"
+            style="@style/text_with_main_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/details"

@@ -177,7 +177,6 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void startPlaying() {
 		mPlayer = new MediaPlayer();
 		try {
@@ -186,26 +185,22 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 
 				@Override
 				public void onCompletion(MediaPlayer mp) {
-					mImageViewAudio.setBackgroundDrawable(getResources()
-							.getDrawable(R.drawable.ic_action_play));
+					mImageViewAudio.setImageResource(R.drawable.ic_action_play);
 					mEditAudio.setEnabled(true);
 				}
 			});
 			mPlayer.prepare();
 			mPlayer.start();
-			mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.ic_action_stop));
+			mImageViewAudio.setImageResource(R.drawable.ic_action_stop);
 			mEditAudio.setEnabled(false);
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "prepare() failed");
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void stopPlaying() {
 		mPlayer.release();
-		mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.ic_action_play));
+		mImageViewAudio.setImageResource(R.drawable.ic_action_play);
 		mEditAudio.setEnabled(true);
 		mPlayer = null;
 	}
@@ -218,7 +213,6 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void startRecording() {
 		mAudioFilePath = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
@@ -238,14 +232,12 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		}
 
 		mRecorder.start();
-		mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.ic_action_stop));
+		mImageViewAudio.setImageResource(R.drawable.ic_action_stop);
 		mEditAudio.setEnabled(false);
 	}
 
 	private Boolean mAudioRecordCompleted = false;
 
-	@SuppressWarnings("deprecation")
 	private void stopRecording() {
 		mRecorder.stop();
 		mRecorder.release();
@@ -253,8 +245,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		// TODO enable play the recorded audio
 		mAudioRecordCompleted = true;
 		mEditAudio.setVisibility(View.VISIBLE);
-		mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.ic_action_play));
+		mImageViewAudio.setImageResource(R.drawable.ic_action_play);
 		mEditAudio.setEnabled(true);
 	}
 
@@ -417,7 +408,6 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 		super.onRestoreInstanceState(savedInstanceState);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -444,8 +434,7 @@ public class CreateCommentActivity extends Activity implements OnClickListener,
 			mAudioRecordCompleted = true;
 			noAudioSelected = false;
 			mEditAudio.setVisibility(View.VISIBLE);
-			mImageViewAudio.setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.ic_action_play));
+			mImageViewAudio.setImageResource(R.drawable.ic_action_play);
 			mEditAudio.setEnabled(true);
 
 			break;

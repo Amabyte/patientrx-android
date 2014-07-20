@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +16,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.matrix.patientrx.R;
 import com.matrix.patientrx.activity.ZoomInZoomOut;
 import com.matrix.patientrx.constants.Constants;
-import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.models.Comment;
+import com.matrix.patientrx.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -59,6 +59,11 @@ public class CommentListAdapter extends BaseAdapter {
 	}
 
 	@Override
+	public boolean isEnabled(int position) {
+		return false;
+	}
+
+	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Comment comment = mCommentList.get(position);
 		ViewHolder holder;
@@ -68,8 +73,6 @@ public class CommentListAdapter extends BaseAdapter {
 			holder = new ViewHolder();
 			holder.textCreatedAt = (TextView) convertView
 					.findViewById(R.id.textCreatedAt);
-			holder.patientCommentView = (RelativeLayout) convertView
-					.findViewById(R.id.patientComment);
 			holder.textMessage = (TextView) convertView
 					.findViewById(R.id.textMessage);
 			holder.img = (ImageView) convertView.findViewById(R.id.img);
@@ -93,54 +96,31 @@ public class CommentListAdapter extends BaseAdapter {
 					startStopPlaying((ImageView) v);
 				}
 			});
-			holder.docCommentView = (RelativeLayout) convertView
-					.findViewById(R.id.docComment);
-			holder.textDocName = (TextView) convertView
-					.findViewById(R.id.textDocName);
-			holder.textDocQualification = (TextView) convertView
-					.findViewById(R.id.textDocQualification);
-			holder.imgDocPlayAudio = (ImageView) convertView
-					.findViewById(R.id.imgDocPlayAudio);
-			holder.textLabTests = (TextView) convertView
-					.findViewById(R.id.textLabTests);
-			holder.textDocSuggestions = (TextView) convertView
-					.findViewById(R.id.textDocSuggestions);
-			holder.textSubRevCase = (TextView) convertView
-					.findViewById(R.id.textSubRevCase);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		if (comment.getWho().equalsIgnoreCase("patient")) {
-			holder.patientCommentView.setVisibility(View.VISIBLE);
-			holder.docCommentView.setVisibility(View.GONE);
+		if (TextUtils.isEmpty(comment.getMessage()))
+			holder.textMessage.setVisibility(View.GONE);
+		else
 			holder.textMessage.setText(comment.getMessage());
-			// TODO confirm this logic with vishal
-			if ((comment.getImage_url() != null)
-					&& (comment.getImage_url().contains("images"))) {
-				holder.img.setVisibility(View.VISIBLE);
-				holder.img.setTag(comment.getImage_url());
-				mImageLoader.displayImage(comment.getImage_url(), holder.img,
-						mOptions);
-			} else {
-				holder.img.setVisibility(View.GONE);
-			}
-			if ((comment.getAudio_url() != null)
-					&& (comment.getAudio_url().contains("audio"))) {
-				holder.imgAudio.setVisibility(View.VISIBLE);
-				holder.imgAudio.setTag(comment.getAudio_url());
-			} else {
-				holder.imgAudio.setVisibility(View.GONE);
-			}
-
-			// patient comment
+		if ((comment.getImage_url() != null)
+				&& (comment.getImage_url().contains("images"))) {
+			holder.img.setVisibility(View.VISIBLE);
+			holder.img.setTag(comment.getImage_url());
+			mImageLoader.displayImage(comment.getImage_url(), holder.img,
+					mOptions);
 		} else {
-			// doc comment
-			holder.patientCommentView.setVisibility(View.GONE);
-			holder.docCommentView.setVisibility(View.VISIBLE);
-
+			holder.img.setVisibility(View.GONE);
 		}
-		holder.textCreatedAt.setText(ServerUtils.getDateInFormat(comment
+		if ((comment.getAudio_url() != null)
+				&& (comment.getAudio_url().contains("audio"))) {
+			holder.imgAudio.setVisibility(View.VISIBLE);
+			holder.imgAudio.setTag(comment.getAudio_url());
+		} else {
+			holder.imgAudio.setVisibility(View.GONE);
+		}
+		holder.textCreatedAt.setText(Utils.getDateInFormat(comment
 				.getCreated_at()));
 		return convertView;
 	}
@@ -149,11 +129,9 @@ public class CommentListAdapter extends BaseAdapter {
 		// play recorded file
 		onPlay(img, mStartPlaying);
 		if (mStartPlaying) {
-			img.setImageDrawable(mContext.getResources().getDrawable(
-					R.drawable.ic_action_stop));
+			img.setImageResource(R.drawable.ic_action_right_stop);
 		} else {
-			img.setImageDrawable(mContext.getResources().getDrawable(
-					R.drawable.ic_action_play));
+			img.setImageResource(R.drawable.ic_action_right_play);
 		}
 		mStartPlaying = !mStartPlaying;
 	}
@@ -193,17 +171,9 @@ public class CommentListAdapter extends BaseAdapter {
 
 	private class ViewHolder {
 		private TextView textCreatedAt;
-		private RelativeLayout patientCommentView;
 		private TextView textMessage;
 		private ImageView img;
 		private ImageView imgAudio;
-		private RelativeLayout docCommentView;
-		private TextView textDocName;
-		private TextView textDocQualification;
-		private ImageView imgDocPlayAudio;
-		private TextView textLabTests;
-		private TextView textDocSuggestions;
-		private TextView textSubRevCase;
 	}
 
 }

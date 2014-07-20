@@ -56,15 +56,38 @@
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="edit_text_with_main_color">
+    <style name="text_with_main_color">
         <item name="android:textColor">@color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:textColorHint">@color/main_hint_color</item>
     </style>
 
-    <style name="edit_text_name" parent="@style/edit_text_with_main_color">
+    <style name="text_large" parent="@style/text_with_main_color">
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+
+    <style name="text_small">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="text_small_time" parent="@style/list_time">
+        <item name="android:textColor">@color/main_hint_color</item>
+    </style>
+
+    <style name="text_name" parent="@style/text_large">
         <item name="android:inputType">textPersonName</item>
+    </style>
+
+    <style name="chat_list">
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:background">@color/main_bg</item>
+    </style>
+
+    <style name="chat_message_right">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
+        <item name="android:textColor">@color/patientrx_color</item>
     </style>
 
 </resources>

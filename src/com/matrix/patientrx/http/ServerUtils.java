@@ -2,10 +2,6 @@ package com.matrix.patientrx.http;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
@@ -196,23 +192,5 @@ public class ServerUtils {
 	public static String getFileExtension(String str) {
 		String s[] = str.split("/");
 		return s[s.length - 1].split("\\.")[1];
-	}
-
-	public static String getDateInFormat(String date) {
-		SimpleDateFormat fromFormat = new SimpleDateFormat(
-				"yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-		SimpleDateFormat toFormat = new SimpleDateFormat("dd MMM yy HH:mm aaa", Locale.getDefault());
-
-		Calendar cal = Calendar.getInstance();
-
-		try {
-			cal.setTime(fromFormat.parse(date));
-			return toFormat.format(cal.getTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return "";
 	}
 }

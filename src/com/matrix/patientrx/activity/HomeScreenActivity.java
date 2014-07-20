@@ -9,10 +9,8 @@ import org.apache.http.Header;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +33,7 @@ import com.matrix.patientrx.http.ProgressJsonHttpResponseHandler;
 import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.models.Case;
 import com.matrix.patientrx.utils.Preference;
+import com.matrix.patientrx.utils.Utils;
 
 public class HomeScreenActivity extends ListActivity implements
 		OnClickListener, OnScrollListener, OnItemClickListener {
@@ -45,16 +44,11 @@ public class HomeScreenActivity extends ListActivity implements
 	private boolean isAddButtonShowing = true;
 	private Animation showAnimation, hideAnimation;
 	private View addButton;
-	private float displayHeight;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home_screen);
-		Display display = getWindowManager().getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		displayHeight = size.y;
 		initialiseViews();
 		initAnimation();
 		lastRefreshTime = new Date();
@@ -62,8 +56,8 @@ public class HomeScreenActivity extends ListActivity implements
 	}
 
 	private void initAnimation() {
-		hideAnimation = new TranslateAnimation(0, 0, 0, displayHeight
-				+ addButton.getHeight());
+		hideAnimation = new TranslateAnimation(0, 0, 0,
+				Utils.getDisplayHeight(this) + addButton.getHeight());
 		hideAnimation.setDuration(300);
 		hideAnimation.setFillAfter(true);
 
@@ -81,8 +75,8 @@ public class HomeScreenActivity extends ListActivity implements
 			public void onAnimationRepeat(Animation animation) {
 			}
 		});
-		showAnimation = new TranslateAnimation(0, 0, displayHeight
-				+ addButton.getHeight(), 0);
+		showAnimation = new TranslateAnimation(0, 0,
+				Utils.getDisplayHeight(this) + addButton.getHeight(), 0);
 		showAnimation.setDuration(300);
 		showAnimation.setFillAfter(true);
 
@@ -116,8 +110,6 @@ public class HomeScreenActivity extends ListActivity implements
 				ViewCaseDetailActivity.class);
 		intent.putExtra(Constants.EXTRA_CASE, caseItem);
 		startActivity(intent);
-		Toast.makeText(HomeScreenActivity.this,
-				"List item:" + caseItem.getName(), Toast.LENGTH_SHORT).show();
 	}
 
 	@Override

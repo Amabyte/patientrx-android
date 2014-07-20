@@ -10,9 +10,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,9 +31,11 @@ import com.matrix.patientrx.http.ServerUtils;
 import com.matrix.patientrx.models.Case;
 import com.matrix.patientrx.models.Comment;
 import com.matrix.patientrx.utils.DialogManager;
+import com.matrix.patientrx.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
-public class ViewCaseDetailActivity extends Activity implements OnClickListener {
+public class ViewCaseDetailActivity extends Activity implements
+		OnClickListener, OnScrollListener {
 	private final int REQUEST_CREATE_COMMENT = 0;
 	private TextView mTextCreatedAt;
 	private TextView mTextName;
@@ -37,21 +43,28 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 	private TextView mTextAge;
 	private TextView mTextMessage;
 	private ListView mListComments;
+	private View addButton;
 	private DialogManager mDialogManager;
 	private int mCaseId;
 	DisplayImageOptions options;
+
+	private Animation showAnimation, hideAnimation;
+	private int lastFisrtItem = 0;
+	private boolean isAddButtonShowing = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_case_detail);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		initializeViews();
+		initAnimation();
 		mDialogManager = new DialogManager();
 		Case caseItem = getIntent().getParcelableExtra(Constants.EXTRA_CASE);
-		mTextCreatedAt.setText(ServerUtils.getDateInFormat(caseItem.getCreated_at()));
+		mTextCreatedAt.setText(Utils.getDateInFormat(caseItem.getCreated_at()));
 		mTextName.setText(caseItem.getName());
-		mTextGender.setText(caseItem.getGender());
-		mTextAge.setText(caseItem.getAge() + "");
+		mTextGender.setText("Sex : " + caseItem.getGender());
+		mTextAge.setText("Age : " + caseItem.getAge());
 		Comment comment = caseItem.getFirst_case_comment();
 		if (comment != null)
 			mTextMessage.setText(comment.getMessage());
@@ -59,14 +72,55 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 			mTextMessage.setText("");
 		mCaseId = caseItem.getId();
 		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.ic_stub)
-				.showImageForEmptyUri(R.drawable.ic_empty)
-				.showImageOnFail(R.drawable.ic_error).cacheInMemory(true)
+				.showImageOnLoading(R.drawable.camera)
+				.showImageForEmptyUri(R.drawable.camera)
+				.showImageOnFail(R.drawable.camera).cacheInMemory(true)
 				.cacheOnDisk(true).considerExifParams(true).build();
 
 		mDialogManager.showProgressDialog(ViewCaseDetailActivity.this,
 				"Loading...");
 		ServerUtils.getAllComments(mCaseId, mGetAllCommentsResponseHanlder);
+	}
+
+	private void initAnimation() {
+		hideAnimation = new TranslateAnimation(0, 0, 0,
+				Utils.getDisplayHeight(this) + addButton.getHeight());
+		hideAnimation.setDuration(300);
+		hideAnimation.setFillAfter(true);
+
+		hideAnimation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				addButton.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+		});
+		showAnimation = new TranslateAnimation(0, 0,
+				Utils.getDisplayHeight(this) + addButton.getHeight(), 0);
+		showAnimation.setDuration(300);
+		showAnimation.setFillAfter(true);
+
+		showAnimation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+				addButton.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+		});
 	}
 
 	private void initializeViews() {
@@ -76,10 +130,9 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 		mTextAge = (TextView) findViewById(R.id.textAge);
 		mTextMessage = (TextView) findViewById(R.id.textMessage);
 		mListComments = (ListView) findViewById(R.id.listComments);
-		View view = LayoutInflater.from(this).inflate(R.layout.list_button,
-				null);
-		view.findViewById(R.id.buttonCreate).setOnClickListener(this);
-		mListComments.addFooterView(view);
+		mListComments.setOnScrollListener(this);
+		addButton = findViewById(R.id.buttonCreate);
+		addButton.setOnClickListener(this);
 	}
 
 	private JsonHttpResponseHandler mGetAllCommentsResponseHanlder = new JsonHttpResponseHandler() {
@@ -144,4 +197,45 @@ public class ViewCaseDetailActivity extends Activity implements OnClickListener 
 			break;
 		}
 	};
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+		if (lastFisrtItem < firstVisibleItem) {
+			hideAddButton();
+		}
+		if (lastFisrtItem > firstVisibleItem) {
+			showAddButton();
+		}
+		lastFisrtItem = firstVisibleItem;
+	}
+
+	private void showAddButton() {
+		if (!isAddButtonShowing) {
+			isAddButtonShowing = true;
+			addButton.startAnimation(showAnimation);
+		}
+	}
+
+	private void hideAddButton() {
+		if (isAddButtonShowing) {
+			isAddButtonShowing = false;
+			addButton.startAnimation(hideAnimation);
+		}
+	}
+
 }
